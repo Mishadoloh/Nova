@@ -7,20 +7,20 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin",
 
 export const metadata: Metadata = {
   title: "NOVA — твій фокус-кокпіт",
-  description: "Таймер, головні задачі та простір для глибокої роботи без зайвого шуму.",
+  description: "Розумний Pomodoro, проєкти, атмосферні звуки, статистика та синхронізація фокусу між пристроями.",
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
   openGraph: {
     title: "NOVA — твій фокус-кокпіт",
-    description: "Злови ритм. Зроби важливе.",
+    description: "Твій ритм. Твої перемоги.",
     type: "website",
     locale: "uk_UA",
-    images: [{ url: "/og.png", width: 1792, height: 928, alt: "NOVA — злови ритм, зроби важливе" }],
+    images: [{ url: "/og-v2.png", width: 1792, height: 928, alt: "NOVA — твій ритм, твої перемоги" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "NOVA — твій фокус-кокпіт",
-    description: "Злови ритм. Зроби важливе.",
-    images: ["/og.png"],
+    description: "Твій ритм. Твої перемоги.",
+    images: ["/og-v2.png"],
   },
 };
 
