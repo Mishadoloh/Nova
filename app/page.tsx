@@ -259,10 +259,12 @@ export default function Home() {
       <aside className="sidebar">
         <a className="brand" href="#top" aria-label="NOVA — на початок"><span>N</span>NOVA</a>
         <nav aria-label="Головна навігація">
-          <a className="nav-item active" href="#focus"><i>01</i>Фокус</a>
-          <a className="nav-item" href="#tasks"><i>02</i>Проєкти</a>
-          <a className="nav-item" href="#analytics"><i>03</i>Статистика</a>
-          <a className="nav-item" href="#achievements"><i>04</i>Нагороди</a>
+          <a className="nav-item active" href="/"><i>01</i>Фокус</a>
+          <a className="nav-item" href="/projects"><i>02</i>Проєкти</a>
+          <a className="nav-item" href="/analytics"><i>03</i>Аналітика</a>
+          <a className="nav-item" href="/history"><i>04</i>Історія</a>
+          <a className="nav-item" href="/achievements"><i>05</i>Нагороди</a>
+          <a className="nav-item" href="/account"><i>06</i>Профіль</a>
         </nav>
         <div className="level-card"><span className="eyebrow">Рівень {level}</span><strong>{totalMinutes}<small> хв фокусу</small></strong><div><i style={{ width: `${totalMinutes % 120 / 1.2}%` }} /></div></div>
         <button className="profile" type="button"><span className="avatar">{account?.displayName?.[0]?.toUpperCase() ?? "N"}</span><span>{account?.displayName?.split(" ")[0] ?? "Локальний профіль"}<small>{syncState === "synced" ? "✓ Синхронізовано" : syncState === "syncing" ? "Синхронізація…" : "Офлайн-режим"}</small></span><b>•••</b></button>
