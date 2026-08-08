@@ -1,0 +1,1 @@
+export default function OfflinePage(){return <main className="offline-page"><span>N</span><h1>Ти офлайн,<br/>але ритм збережено.</h1><p>NOVA збереже зміни на цьому пристрої та синхронізує їх після повернення мережі.</p><a href="/">Спробувати знову →</a></main>}
