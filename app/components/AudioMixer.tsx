@@ -1,0 +1,10 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+
+const tracks=[{id:"rain",name:"Дощ",icon:"◌",src:"/audio/rain.ogg"},{id:"cafe",name:"Кавʼярня",icon:"≋",src:"/audio/cafe.ogg"},{id:"forest",name:"Ліс",icon:"⌁",src:"/audio/forest.ogg"}];
+export function AudioMixer(){const audio=useRef<Record<string,HTMLAudioElement>>({});const [active,setActive]=useState<Record<string,boolean>>({});const [levels,setLevels]=useState<Record<string,number>>({rain:42,cafe:24,forest:30});const [master,setMaster]=useState(70);
+  useEffect(()=>()=>Object.values(audio.current).forEach(item=>{item.pause();item.src=""}),[]);
+  const toggle=(id:string,src:string)=>{let element=audio.current[id];if(!element){element=new Audio(src);element.loop=true;audio.current[id]=element}if(active[id])element.pause();else element.play().catch(()=>undefined);setActive(value=>({...value,[id]:!value[id]}))};
+  useEffect(()=>{tracks.forEach(track=>{const element=audio.current[track.id];if(element)element.volume=(levels[track.id]??0)/100*master/100})},[levels,master]);
+  return <section className="sound-card mixer-card"><div className="sound-heading"><div><span className="eyebrow">Аудіомікшер</span><h2>Природні атмосфери</h2></div><button type="button" className="sound-stop" onClick={()=>{Object.values(audio.current).forEach(item=>item.pause());setActive({})}} aria-label="Зупинити всі звуки">■</button></div><div className="mixer-tracks">{tracks.map(track=><div className={active[track.id]?"playing":""} key={track.id}><button type="button" onClick={()=>toggle(track.id,track.src)} aria-pressed={Boolean(active[track.id])}><i>{track.icon}</i><span>{track.name}</span><b>{active[track.id]?"Ⅱ":"▶"}</b></button><input type="range" min="0" max="100" value={levels[track.id]} onChange={event=>setLevels(value=>({...value,[track.id]:Number(event.target.value)}))} aria-label={`Гучність: ${track.name}`}/></div>)}</div><label className="volume master-volume"><span>Загальна гучність</span><input type="range" min="0" max="100" value={master} onChange={event=>setMaster(Number(event.target.value))}/><b>{master}%</b></label></section>}

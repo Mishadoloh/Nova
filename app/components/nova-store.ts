@@ -1,46 +1,76 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-export type Project = { id: string; name: string; color: string; createdAt: number };
-export type Task = { id: string; projectId: string; text: string; done: boolean; createdAt: number };
+export type Project = { id: string; name: string; color: string; deadline?: number | null; archived?: boolean; createdAt: number; updatedAt?: number };
+export type Task = { id: string; projectId: string; text: string; done: boolean; status?: "todo" | "doing" | "done"; deadline?: number | null; recurrence?: string | null; sortOrder?: number; createdAt: number; updatedAt?: number };
 export type Session = { id: string; projectId: string; startedAt: number; durationSeconds: number };
+export type CalendarEvent = { id: string; projectId?: string | null; title: string; startsAt: number; durationMinutes: number; recurrence?: string | null; completed?: boolean; createdAt: number; updatedAt?: number };
 export type Preferences = { focusMinutes: number; breakMinutes: number; autoPomodoro: boolean };
-export type NovaData = { projects: Project[]; tasks: Task[]; sessions: Session[]; preferences: Preferences };
+export type NovaData = { projects: Project[]; tasks: Task[]; sessions: Session[]; events: CalendarEvent[]; preferences: Preferences };
 export type Account = { displayName: string; email: string };
 
-const emptyData: NovaData = { projects: [], tasks: [], sessions: [], preferences: { focusMinutes: 25, breakMinutes: 5, autoPomodoro: false } };
+const emptyData: NovaData = { projects: [], tasks: [], sessions: [], events: [], preferences: { focusMinutes: 25, breakMinutes: 5, autoPomodoro: false } };
+const cacheKey = "nova-v3-cache";
+const queueKey = "nova-sync-queue";
+
+function normalize(value: Partial<NovaData>): NovaData {
+  return { projects: value.projects ?? [], tasks: value.tasks ?? [], sessions: value.sessions ?? [], events: value.events ?? [], preferences: value.preferences ?? emptyData.preferences };
+}
+
+function mergeByUpdated<T extends { id: string; updatedAt?: number; createdAt?: number; startedAt?: number }>(local: T[], remote: T[]) {
+  const items = new Map<string,T>();
+  [...remote,...local].forEach((item) => { const previous=items.get(item.id); if (!previous || (item.updatedAt ?? item.createdAt ?? item.startedAt ?? 0) >= (previous.updatedAt ?? previous.createdAt ?? previous.startedAt ?? 0)) items.set(item.id,item); });
+  return [...items.values()];
+}
 
 export function useNovaStore() {
   const [data, setData] = useState<NovaData>(emptyData);
   const [account, setAccount] = useState<Account | null>(null);
   const [ready, setReady] = useState(false);
   const [syncing, setSyncing] = useState(false);
+  const [lastSyncedAt, setLastSyncedAt] = useState<number | null>(null);
+  const revision = useRef(0);
+
+  const fetchRemote = useCallback(async () => {
+    const response = await fetch("/api/sync", { cache: "no-store" });
+    if (!response.ok) throw new Error("offline");
+    const result = await response.json();
+    revision.current = result.revision ?? 0;
+    setAccount(result.user);
+    const next = normalize(result);
+    setData((current) => next.projects.length || next.tasks.length || next.sessions.length || next.events.length ? next : current);
+    setLastSyncedAt(Date.now());
+    return next;
+  }, []);
+
+  const push = useCallback(async (snapshot: NovaData, force = false) => {
+    const response = await fetch("/api/sync", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...snapshot, baseRevision: revision.current, force }) });
+    if (response.status === 409) {
+      const remoteResponse = await fetch("/api/sync", { cache: "no-store" });
+      const remote = await remoteResponse.json();
+      revision.current = remote.revision ?? 0;
+      const merged: NovaData = { ...snapshot, projects: mergeByUpdated(snapshot.projects,remote.projects??[]), tasks: mergeByUpdated(snapshot.tasks,remote.tasks??[]), events: mergeByUpdated(snapshot.events,remote.events??[]), sessions: mergeByUpdated(snapshot.sessions,remote.sessions??[]) };
+      setData(merged); localStorage.setItem(cacheKey,JSON.stringify(merged));
+      return push(merged,true);
+    }
+    if (!response.ok) throw new Error("sync");
+    const result=await response.json(); revision.current=result.revision ?? revision.current+1;
+    setLastSyncedAt(result.syncedAt ?? Date.now()); localStorage.removeItem(queueKey);
+  }, []);
 
   useEffect(() => {
-    const cached = localStorage.getItem("nova-v2-cache");
-    if (cached) {
-      try { setData(JSON.parse(cached)); } catch { /* optional cache */ }
-    }
-    fetch("/api/sync").then(async (response) => {
-      if (!response.ok) throw new Error("offline");
-      const result = await response.json();
-      setAccount(result.user);
-      setData((current) => ({
-        projects: result.projects?.length ? result.projects : current.projects,
-        tasks: result.tasks?.length ? result.tasks : current.tasks,
-        sessions: result.sessions?.length ? result.sessions : current.sessions,
-        preferences: result.preferences ?? current.preferences,
-      }));
-    }).catch(() => undefined).finally(() => setReady(true));
-  }, []);
+    const cached = localStorage.getItem(cacheKey) ?? localStorage.getItem("nova-v2-cache");
+    if (cached) { try { setData(normalize(JSON.parse(cached))); } catch { /* optional cache */ } }
+    fetchRemote().catch(() => undefined).finally(() => setReady(true));
+    const flush = () => { const queued=localStorage.getItem(queueKey); if (queued) { try { push(normalize(JSON.parse(queued))).catch(()=>undefined); } catch { /* invalid queue */ } } };
+    window.addEventListener("online",flush); return () => window.removeEventListener("online",flush);
+  }, [fetchRemote,push]);
 
   const save = useCallback(async (next: NovaData) => {
-    setData(next);
-    localStorage.setItem("nova-v2-cache", JSON.stringify(next));
-    setSyncing(true);
-    try { await fetch("/api/sync", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(next) }); } finally { setSyncing(false); }
-  }, []);
+    setData(next); localStorage.setItem(cacheKey,JSON.stringify(next)); localStorage.setItem(queueKey,JSON.stringify(next)); setSyncing(true);
+    try { await push(next); } catch { /* queued for reconnect */ } finally { setSyncing(false); }
+  }, [push]);
 
-  return { data, account, ready, syncing, save };
+  return { data, account, ready, syncing, lastSyncedAt, save, refresh: fetchRemote };
 }

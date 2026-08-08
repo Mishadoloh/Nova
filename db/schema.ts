@@ -5,7 +5,10 @@ export const projects = sqliteTable("projects", {
   userId: text("user_id").notNull(),
   name: text("name").notNull(),
   color: text("color").notNull(),
+  deadline: integer("deadline"),
+  archived: integer("archived", { mode: "boolean" }).notNull().default(false),
   createdAt: integer("created_at").notNull(),
+  updatedAt: integer("updated_at").notNull().default(0),
 }, (table) => [index("idx_projects_user_created").on(table.userId, table.createdAt)]);
 
 export const tasks = sqliteTable("tasks", {
@@ -14,7 +17,12 @@ export const tasks = sqliteTable("tasks", {
   projectId: text("project_id").notNull(),
   text: text("text").notNull(),
   done: integer("done", { mode: "boolean" }).notNull().default(false),
+  status: text("status").notNull().default("todo"),
+  deadline: integer("deadline"),
+  recurrence: text("recurrence"),
+  sortOrder: integer("sort_order").notNull().default(0),
   createdAt: integer("created_at").notNull(),
+  updatedAt: integer("updated_at").notNull().default(0),
 }, (table) => [index("idx_tasks_user_project").on(table.userId, table.projectId)]);
 
 export const focusSessions = sqliteTable("focus_sessions", {
@@ -30,5 +38,24 @@ export const userPreferences = sqliteTable("user_preferences", {
   focusMinutes: integer("focus_minutes").notNull().default(25),
   breakMinutes: integer("break_minutes").notNull().default(5),
   autoPomodoro: integer("auto_pomodoro", { mode: "boolean" }).notNull().default(false),
+  updatedAt: integer("updated_at").notNull().default(0),
+});
+
+export const calendarEvents = sqliteTable("calendar_events", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  projectId: text("project_id"),
+  title: text("title").notNull(),
+  startsAt: integer("starts_at").notNull(),
+  durationMinutes: integer("duration_minutes").notNull(),
+  recurrence: text("recurrence"),
+  completed: integer("completed", { mode: "boolean" }).notNull().default(false),
+  createdAt: integer("created_at").notNull(),
+  updatedAt: integer("updated_at").notNull(),
+}, (table) => [index("idx_events_user_starts").on(table.userId, table.startsAt)]);
+
+export const syncMeta = sqliteTable("sync_meta", {
+  userId: text("user_id").primaryKey(),
+  revision: integer("revision").notNull().default(0),
   updatedAt: integer("updated_at").notNull(),
 });

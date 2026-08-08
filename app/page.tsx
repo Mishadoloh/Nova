@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { AudioMixer } from "./components/AudioMixer";
 
 type Project = { id: string; name: string; color: string; createdAt: number };
 type Task = { id: string; projectId: string; text: string; done: boolean; createdAt: number };
@@ -9,21 +10,9 @@ type Preferences = { focusMinutes: number; breakMinutes: number; autoPomodoro: b
 type Account = { displayName: string; email: string };
 
 const now = Date.now();
-const defaultProjects: Project[] = [
-  { id: "work", name: "Робота", color: "#dfff00", createdAt: now - 3000 },
-  { id: "study", name: "Навчання", color: "#78d6ff", createdAt: now - 2000 },
-  { id: "personal", name: "Особисте", color: "#ff7a5c", createdAt: now - 1000 },
-];
-const defaultTasks: Task[] = [
-  { id: "task-1", projectId: "work", text: "Завершити головний екран", done: true, createdAt: now - 3000 },
-  { id: "task-2", projectId: "work", text: "Підготувати коротку презентацію", done: false, createdAt: now - 2000 },
-  { id: "task-3", projectId: "personal", text: "30 хвилин без сповіщень", done: false, createdAt: now - 1000 },
-];
-const defaultSessions: Session[] = [
-  { id: "demo-1", projectId: "work", startedAt: now - 86400000 * 3 + 10 * 3600000, durationSeconds: 2700 },
-  { id: "demo-2", projectId: "study", startedAt: now - 86400000 * 2 + 15 * 3600000, durationSeconds: 3600 },
-  { id: "demo-3", projectId: "work", startedAt: now - 86400000 + 9 * 3600000, durationSeconds: 4500 },
-];
+const defaultProjects: Project[] = [];
+const defaultTasks: Task[] = [];
+const defaultSessions: Session[] = [];
 const defaultPreferences: Preferences = { focusMinutes: 25, breakMinutes: 5, autoPomodoro: false };
 const colors = ["#dfff00", "#78d6ff", "#ff7a5c", "#c7a7ff", "#ffd66b"];
 
@@ -85,6 +74,8 @@ export default function Home() {
       serverReady.current = true;
     }).catch(() => setSyncState("offline")).finally(() => { hydrated.current = true; });
   }, []);
+
+  useEffect(()=>{if(projects.length&&!projects.some(item=>item.id===activeProject))setActiveProject(projects[0].id)},[projects,activeProject]);
 
   useEffect(() => {
     if (!hydrated.current) return;
@@ -261,10 +252,11 @@ export default function Home() {
         <nav aria-label="Головна навігація">
           <a className="nav-item active" href="/"><i>01</i>Фокус</a>
           <a className="nav-item" href="/projects"><i>02</i>Проєкти</a>
-          <a className="nav-item" href="/analytics"><i>03</i>Аналітика</a>
-          <a className="nav-item" href="/history"><i>04</i>Історія</a>
-          <a className="nav-item" href="/achievements"><i>05</i>Нагороди</a>
-          <a className="nav-item" href="/account"><i>06</i>Профіль</a>
+          <a className="nav-item" href="/calendar"><i>03</i>Календар</a>
+          <a className="nav-item" href="/analytics"><i>04</i>Аналітика</a>
+          <a className="nav-item" href="/history"><i>05</i>Історія</a>
+          <a className="nav-item" href="/achievements"><i>06</i>Нагороди</a>
+          <a className="nav-item" href="/account"><i>07</i>Профіль</a>
         </nav>
         <div className="level-card"><span className="eyebrow">Рівень {level}</span><strong>{totalMinutes}<small> хв фокусу</small></strong><div><i style={{ width: `${totalMinutes % 120 / 1.2}%` }} /></div></div>
         <button className="profile" type="button"><span className="avatar">{account?.displayName?.[0]?.toUpperCase() ?? "N"}</span><span>{account?.displayName?.split(" ")[0] ?? "Локальний профіль"}<small>{syncState === "synced" ? "✓ Синхронізовано" : syncState === "syncing" ? "Синхронізація…" : "Офлайн-режим"}</small></span><b>•••</b></button>
@@ -306,11 +298,7 @@ export default function Home() {
               <form className="add-task" onSubmit={addTask}><input value={newTask} onChange={(event) => setNewTask(event.target.value)} placeholder="Додати задачу до проєкту…" aria-label="Нова задача" /><button type="submit" aria-label="Додати задачу">+</button></form>
             </section>
 
-            <section className="sound-card">
-              <div className="sound-heading"><div><span className="eyebrow">Атмосфера</span><h2>{soundPlaying ? `${sound} звучить` : "Звук для потоку"}</h2></div><button type="button" className="sound-stop" onClick={stopAmbient}>{soundPlaying ? "■" : "·"}</button></div>
-              <div className="sound-options">{[["Дощ", "◌"], ["Кавʼярня", "≋"], ["Ліс", "⌁"], ["Тиша", "·"]].map(([item, icon]) => <button type="button" key={item} className={sound === item ? "active" : ""} onClick={() => playAmbient(item)}><i>{icon}</i><span>{item}</span></button>)}</div>
-              <label className="volume"><span>Гучність</span><input type="range" min="0" max="100" value={volume} onChange={(event) => setVolume(Number(event.target.value))} /><b>{volume}%</b></label>
-            </section>
+            <AudioMixer />
           </div>
         </section>
 
