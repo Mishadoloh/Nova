@@ -280,7 +280,7 @@ export default function Home() {
 
         <section className="focus-grid" id="focus">
           <div className="timer-card">
-            <div className="timer-head"><span className="eyebrow">{timerMode === "focus" ? `Фокус · ${project?.name}` : "Відновлення"}</span><div><button type="button" onClick={() => resetTimer()} aria-label="Скинути таймер">↻</button>{zen && <button className="exit-zen" type="button" onClick={() => setZen(false)}>Вийти ×</button>}</div></div>
+            <div className="timer-head"><span className="eyebrow">{timerMode === "focus" ? `Фокус · ${project?.name ?? "без проєкту"}` : "Відновлення"}</span><div><button type="button" onClick={() => resetTimer()} aria-label="Скинути таймер">↻</button>{zen && <button className="exit-zen" type="button" onClick={() => setZen(false)}>Вийти ×</button>}</div></div>
             <div className="mode-tabs" role="tablist" aria-label="Режим таймера">
               <button type="button" role="tab" aria-selected={timerMode === "focus"} className={timerMode === "focus" ? "selected" : ""} onClick={() => resetTimer("focus")}>Фокус · {preferences.focusMinutes} хв</button>
               <button type="button" role="tab" aria-selected={timerMode === "break"} className={timerMode === "break" ? "selected" : ""} onClick={() => resetTimer("break")}>Перерва · {preferences.breakMinutes} хв</button>
