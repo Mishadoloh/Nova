@@ -1,0 +1,130 @@
+/* NOVA styles · final quality pass */
+
+:root {
+  color-scheme: dark;
+  --focus-ring: color-mix(in srgb, var(--accent) 72%, white);
+  --muted-readable: #9a9f98;
+}
+
+body {
+  min-width: 320px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  color: #0a0c0b;
+  background: var(--accent);
+}
+
+:where(button, a, input, select, textarea) {
+  outline: none;
+}
+
+:where(button, a, input, select, textarea):focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+:where(button, a) {
+  touch-action: manipulation;
+}
+
+:where(button:not(:disabled), a[href], input:not(:disabled), select:not(:disabled)) {
+  transition-property: color, background-color, border-color, box-shadow, opacity, transform;
+  transition-duration: 180ms;
+  transition-timing-function: cubic-bezier(.2, .8, .2, 1);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: .48;
+}
+
+:where(input, textarea)::placeholder {
+  color: #747a73;
+  opacity: 1;
+}
+
+:where(.page-subtitle, .hero-copy > p, .progress-card p, .project-tile small, .board-task small) {
+  color: var(--muted-readable);
+}
+
+:where(.timer-card, .task-card, .sound-card, .project-tile, .analytics-panel, .calendar-panel, .account-card) {
+  isolation: isolate;
+}
+
+:where(.timer-card, .task-card, .sound-card, .project-tile, .analytics-panel, .calendar-panel, .account-card)::after {
+  pointer-events: none;
+}
+
+.nav-item.active {
+  border-color: color-mix(in srgb, var(--accent) 24%, transparent);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 9%, transparent), rgba(255,255,255,.035));
+}
+
+.top-actions button:hover,
+.add-task button:hover,
+.sound-options button:hover {
+  border-color: color-mix(in srgb, var(--accent) 28%, var(--line));
+  background-color: color-mix(in srgb, var(--accent) 6%, rgba(255,255,255,.035));
+}
+
+.workspace :where(h1, h2, h3, p) {
+  text-wrap: pretty;
+}
+
+.workspace :where(h1, h2, h3) {
+  text-wrap: balance;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--accent) 34%, #424742) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 28%, #454a45) padding-box;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@media (max-width: 660px) {
+  :where(.top-actions button, .add-task button, .check) {
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  .nav-item {
+    min-height: 44px;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --line: rgba(255,255,255,.24);
+    --muted: #b2b7b0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

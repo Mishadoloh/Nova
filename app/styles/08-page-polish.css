@@ -1,0 +1,310 @@
+/* NOVA styles · 08-page-polish.css */
+.metric-row > div:hover {
+  background: var(--accent-faint);
+}
+
+.metric-row strong {
+  font-size: 29px;
+  letter-spacing: -0.06em;
+}
+
+.analytics-main,
+.analytics-lower {
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.big-chart,
+.focus-score,
+.category-panel,
+.heat-panel {
+  padding: 26px;
+  border-radius: 23px;
+}
+
+.score-ring {
+  width: 146px;
+  box-shadow: 0 0 48px var(--accent-faint);
+}
+
+.heat-grid i {
+  border: 1px solid rgba(255, 255, 255, 0.025);
+}
+
+.heat-grid i.hot {
+  box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 26%, transparent);
+}
+
+.calendar-layout {
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.month-panel,
+.day-planner {
+  padding: 27px;
+  border-radius: 24px;
+}
+
+.month-grid {
+  gap: 7px;
+}
+
+.month-grid button {
+  border-color: rgba(255, 255, 255, 0.025);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.014);
+}
+
+.month-grid button:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.04);
+  transform: translateY(-2px);
+}
+
+.month-grid button.selected {
+  border-color: var(--accent);
+  background: var(--accent);
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--accent) 13%, transparent);
+}
+
+.day-events article {
+  border-top-color: rgba(255, 255, 255, 0.075);
+}
+
+.event-form input:focus,
+.event-form select:focus {
+  border-color: color-mix(in srgb, var(--accent) 48%, transparent);
+  box-shadow: 0 0 0 3px var(--accent-faint);
+}
+
+.level-hero {
+  min-height: 245px;
+  padding: 32px;
+  border-radius: 25px;
+  background:
+    radial-gradient(circle at 7% 50%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 32%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.025), transparent),
+    var(--panel);
+  box-shadow: var(--shadow-sm);
+}
+
+.level-orbit {
+  width: 138px;
+  box-shadow:
+    0 0 55px color-mix(in srgb, var(--accent) 12%, transparent),
+    inset 0 0 35px color-mix(in srgb, var(--accent) 4%, transparent);
+}
+
+.badge-grid {
+  gap: 13px;
+}
+
+.badge-card {
+  min-height: 164px;
+  padding: 22px;
+  border-radius: 20px;
+}
+
+.badge-card:hover {
+  border-color: rgba(255, 255, 255, 0.17);
+  transform: translateY(-3px);
+}
+
+.badge-card.unlocked {
+  border-color: color-mix(in srgb, var(--accent) 14%, var(--line));
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.2);
+}
+
+.history-summary {
+  gap: 13px;
+  margin-top: 32px;
+}
+
+.history-summary > div {
+  padding: 23px;
+  border-radius: 19px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.025), transparent);
+}
+
+.timeline {
+  margin-top: 42px;
+}
+
+.timeline-items article {
+  min-height: 80px;
+  margin-bottom: 9px;
+  padding: 15px 18px;
+  border-radius: 15px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.02), transparent),
+    var(--panel);
+}
+
+.timeline-items article:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+  transform: translateX(3px);
+}
+
+.account-card {
+  margin-top: 32px;
+  padding: 32px;
+  border-radius: 24px;
+}
+
+.account-avatar {
+  width: 82px;
+  height: 82px;
+  box-shadow:
+    0 0 0 7px var(--accent-faint),
+    0 16px 42px color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+.account-grid {
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.account-grid article {
+  padding: 28px;
+  border-radius: 23px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.02), transparent),
+    rgba(255, 255, 255, 0.012);
+}
+
+.account-grid article:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.settings-page-grid {
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.settings-group {
+  min-height: 410px;
+  padding: 28px;
+  border-radius: 23px;
+}
+
+.settings-field,
+.settings-switch {
+  min-height: 84px;
+  border-top-color: rgba(255, 255, 255, 0.075);
+}
+
+.settings-field:hover,
+.settings-switch:hover {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.018));
+}
+
+.settings-save {
+  margin-top: 16px;
+  padding: 20px 24px;
+  border-radius: 19px;
+  background: var(--accent-faint);
+}
+
+.command-trigger {
+  right: 22px;
+  bottom: 22px;
+  min-height: 42px;
+  padding-inline: 15px;
+  border-color: rgba(255, 255, 255, 0.13);
+  background: rgba(19, 23, 20, 0.9);
+  box-shadow:
+    0 16px 45px rgba(0, 0, 0, 0.4),
+    inset 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.command-trigger:hover {
+  color: white;
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  background: #1b201c;
+  transform: translateY(-3px);
+}
+
+.command-panel {
+  border-radius: 24px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.028), transparent),
+    #121613;
+  box-shadow: 0 40px 140px rgba(0, 0, 0, 0.78);
+}
+
+.command-results button {
+  border: 1px solid transparent;
+  border-radius: 12px;
+}
+
+.command-results button:hover,
+.command-results button:focus-visible {
+  border-color: rgba(255, 255, 255, 0.075);
+  background: rgba(255, 255, 255, 0.045);
+  transform: translateX(3px);
+}
+
+.onboarding-card {
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 78% 8%, rgba(223, 255, 0, 0.1), transparent 30%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.025), transparent),
+    #101411;
+  box-shadow: var(--shadow-lg);
+}
+
+.onboarding-mark {
+  box-shadow:
+    0 0 0 9px var(--accent-faint),
+    0 18px 48px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+.modal-backdrop,
+.command-backdrop,
+.onboarding-backdrop {
+  background: rgba(4, 6, 4, 0.8);
+  backdrop-filter: blur(24px) saturate(110%);
+}
+
+.settings-modal {
+  border-radius: 27px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.025), transparent),
+    #121613;
+  box-shadow: 0 40px 130px rgba(0, 0, 0, 0.7);
+}
+
+.offline-page {
+  background:
+    radial-gradient(circle at center, rgba(223, 255, 0, 0.07), transparent 34%),
+    var(--black);
+}
+
+.zen-mode .timer-card {
+  background:
+    radial-gradient(circle at center, color-mix(in srgb, var(--accent) 8%, #0b0d0c), #080a09 57%),
+    #080a09;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-copy,
+.page-title > div,
+.focus-grid,
+.project-overview,
+.metric-row,
+.calendar-layout,
+.level-hero,
+.account-card {
+  animation: rise-in 520ms var(--ease-out) both;
+}

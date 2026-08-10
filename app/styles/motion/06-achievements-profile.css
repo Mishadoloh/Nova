@@ -1,0 +1,217 @@
+/* NOVA motion · 06-achievements-profile.css */
+@keyframes nova-badge-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.94);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1.015);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes nova-badge-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0);
+  }
+  50% {
+    transform: translateY(-4px) rotate(1.5deg);
+  }
+}
+
+@keyframes nova-unlocked-glow {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 0 25px rgba(223, 255, 0, 0.09),
+      0 0 0 rgba(223, 255, 0, 0);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 34px rgba(223, 255, 0, 0.13),
+      0 0 26px rgba(223, 255, 0, 0.07);
+  }
+}
+
+.achievement,
+.badge-card {
+  animation: nova-badge-enter 650ms var(--motion-spring) both;
+}
+
+.achievement:nth-child(1),
+.badge-card:nth-child(1) {
+  animation-delay: 60ms;
+}
+
+.achievement:nth-child(2),
+.badge-card:nth-child(2) {
+  animation-delay: 110ms;
+}
+
+.achievement:nth-child(3),
+.badge-card:nth-child(3) {
+  animation-delay: 160ms;
+}
+
+.achievement:nth-child(4),
+.badge-card:nth-child(4) {
+  animation-delay: 210ms;
+}
+
+.achievement:nth-child(5),
+.badge-card:nth-child(5) {
+  animation-delay: 260ms;
+}
+
+.achievement:nth-child(6),
+.badge-card:nth-child(6) {
+  animation-delay: 310ms;
+}
+
+.achievement.unlocked > i,
+.badge-card.unlocked .badge-mark {
+  animation:
+    nova-badge-float 4s ease-in-out infinite,
+    nova-unlocked-glow 3s ease-in-out infinite;
+}
+
+.achievement:hover > i,
+.badge-card:hover .badge-mark {
+  transform: rotate(-5deg) scale(1.08);
+}
+
+.level-orbit {
+  animation-name: nova-ring-enter, nova-badge-float;
+  animation-duration: 900ms, 5s;
+  animation-timing-function: var(--motion-spring), ease-in-out;
+  animation-fill-mode: both, both;
+  animation-iteration-count: 1, infinite;
+}
+
+/* -------------------------------------------------------------------------- */
+/* History and profile                                                        */
+/* -------------------------------------------------------------------------- */
+
+@keyframes nova-timeline-enter {
+  0% {
+    opacity: 0;
+    transform: translateX(18px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes nova-timeline-dot {
+  0%,
+  100% {
+    transform: scale(0.82);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+@keyframes nova-avatar-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(1deg);
+  }
+}
+
+.history-summary > div {
+  animation: nova-rise-soft 560ms var(--motion-ease) both;
+}
+
+.history-summary > div:nth-child(1) {
+  animation-delay: 70ms;
+}
+
+.history-summary > div:nth-child(2) {
+  animation-delay: 125ms;
+}
+
+.history-summary > div:nth-child(3) {
+  animation-delay: 180ms;
+}
+
+.timeline-day {
+  animation: nova-rise-soft 620ms var(--motion-ease) both;
+}
+
+.timeline-day:nth-child(1) {
+  animation-delay: 80ms;
+}
+
+.timeline-day:nth-child(2) {
+  animation-delay: 140ms;
+}
+
+.timeline-day:nth-child(3) {
+  animation-delay: 200ms;
+}
+
+.timeline-items article {
+  animation: nova-timeline-enter 520ms var(--motion-ease) both;
+}
+
+.timeline-items article:nth-child(1) {
+  animation-delay: 45ms;
+}
+
+.timeline-items article:nth-child(2) {
+  animation-delay: 90ms;
+}
+
+.timeline-items article:nth-child(3) {
+  animation-delay: 135ms;
+}
+
+.timeline-items article > i {
+  animation: nova-timeline-dot 2.4s ease-in-out infinite;
+}
+
+.account-avatar {
+  animation:
+    nova-scale-in 700ms var(--motion-spring) both,
+    nova-avatar-float 5s ease-in-out 900ms infinite;
+}
+
+.account-grid article {
+  animation: nova-card-enter 620ms var(--motion-ease) both;
+}
+
+.account-grid article:nth-child(1) {
+  animation-delay: 100ms;
+}
+
+.account-grid article:nth-child(2) {
+  animation-delay: 160ms;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Settings                                                                   */
+/* -------------------------------------------------------------------------- */
+
+@keyframes nova-toggle-on {
+  0% {
+    transform: translateX(0) scale(1);
+  }
+  60% {
+    transform: translateX(19px) scale(1.16);
+  }
+  100% {
+    transform: translateX(19px) scale(1);
+  }
+}

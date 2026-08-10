@@ -1,0 +1,204 @@
+/* NOVA motion · 02-navigation.css */
+/* -------------------------------------------------------------------------- */
+/* Sidebar choreography                                                       */
+/* -------------------------------------------------------------------------- */
+
+@keyframes nova-brand-arrive {
+  0% {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes nova-logo-breathe {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 5px rgba(223, 255, 0, 0.04),
+      0 10px 28px rgba(223, 255, 0, 0.16);
+  }
+  50% {
+    box-shadow:
+      0 0 0 8px rgba(223, 255, 0, 0.025),
+      0 14px 38px rgba(223, 255, 0, 0.25);
+  }
+}
+
+@keyframes nova-nav-arrive {
+  0% {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes nova-active-line {
+  0%,
+  100% {
+    opacity: 0.65;
+    box-shadow: 0 0 4px var(--accent);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 14px var(--accent);
+  }
+}
+
+.brand {
+  animation: nova-brand-arrive 580ms var(--motion-ease) both;
+}
+
+.brand span {
+  animation: nova-logo-breathe 4.5s ease-in-out infinite;
+}
+
+.nav-item {
+  animation: nova-nav-arrive 520ms var(--motion-ease) both;
+}
+
+.nav-item:nth-child(1) {
+  animation-delay: 70ms;
+}
+
+.nav-item:nth-child(2) {
+  animation-delay: 110ms;
+}
+
+.nav-item:nth-child(3) {
+  animation-delay: 150ms;
+}
+
+.nav-item:nth-child(4) {
+  animation-delay: 190ms;
+}
+
+.nav-item:nth-child(5) {
+  animation-delay: 230ms;
+}
+
+.nav-item:nth-child(6) {
+  animation-delay: 270ms;
+}
+
+.nav-item:nth-child(7) {
+  animation-delay: 310ms;
+}
+
+.nav-item.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 14px;
+  bottom: 14px;
+  width: 2px;
+  border-radius: 99px;
+  background: var(--accent);
+  animation: nova-active-line 2.4s ease-in-out infinite;
+}
+
+.nav-item {
+  position: relative;
+}
+
+.side-ritual,
+.level-card {
+  animation: nova-rise 700ms var(--motion-ease) 280ms both;
+}
+
+.profile {
+  animation: nova-rise-soft 620ms var(--motion-ease) 340ms both;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Headline and top bar                                                       */
+/* -------------------------------------------------------------------------- */
+
+@keyframes nova-kicker-line {
+  0% {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  100% {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+@keyframes nova-headline-reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(28px) skewY(2deg);
+    clip-path: inset(100% 0 0 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) skewY(0);
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes nova-accent-glow {
+  0%,
+  100% {
+    text-shadow: 0 0 30px rgba(223, 255, 0, 0.08);
+  }
+  50% {
+    text-shadow:
+      0 0 22px rgba(223, 255, 0, 0.2),
+      0 0 54px rgba(223, 255, 0, 0.08);
+  }
+}
+
+@keyframes nova-status-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 1;
+  }
+}
+
+.topbar {
+  animation: nova-fade 600ms ease both;
+}
+
+.hero-copy .kicker {
+  animation: nova-slide-left 560ms var(--motion-ease) 80ms both;
+}
+
+.hero-copy .kicker::before {
+  animation: nova-kicker-line 760ms var(--motion-ease) 300ms both;
+}
+
+.hero-copy h1 {
+  animation: nova-headline-reveal 900ms var(--motion-ease) 120ms both;
+}
+
+.hero-copy h1 em {
+  animation: nova-accent-glow 4s ease-in-out 1s infinite;
+}
+
+.hero-copy > p {
+  animation: nova-rise-soft 680ms var(--motion-ease) 280ms both;
+}
+
+.status i,
+.page-status::before,
+.account-sync.online i,
+.sync-pill i.synced {
+  animation: nova-status-pulse 2.2s ease-in-out infinite;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Generic card motion                                                        */
+/* -------------------------------------------------------------------------- */

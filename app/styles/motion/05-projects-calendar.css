@@ -1,0 +1,252 @@
+/* NOVA motion · 05-projects-calendar.css */
+/* -------------------------------------------------------------------------- */
+/* Project board                                                              */
+/* -------------------------------------------------------------------------- */
+
+@keyframes nova-project-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(18px) rotateX(7deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotateX(0);
+  }
+}
+
+@keyframes nova-project-dot {
+  0%,
+  100% {
+    transform: scale(0.9);
+    opacity: 0.75;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 1;
+  }
+}
+
+@keyframes nova-kanban-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) rotate(0.5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+  }
+}
+
+@keyframes nova-grip-wiggle {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  35% {
+    transform: rotate(-8deg);
+  }
+  70% {
+    transform: rotate(8deg);
+  }
+}
+
+.project-tile {
+  animation: nova-project-enter 680ms var(--motion-ease) both;
+  transform-origin: center bottom;
+}
+
+.project-tile:nth-child(1) {
+  animation-delay: 70ms;
+}
+
+.project-tile:nth-child(2) {
+  animation-delay: 125ms;
+}
+
+.project-tile:nth-child(3) {
+  animation-delay: 180ms;
+}
+
+.project-tile:nth-child(4) {
+  animation-delay: 235ms;
+}
+
+.project-tile:nth-child(5) {
+  animation-delay: 290ms;
+}
+
+.project-tile:nth-child(6) {
+  animation-delay: 345ms;
+}
+
+.project-tile > i {
+  animation: nova-project-dot 2.5s ease-in-out infinite;
+}
+
+.board-column {
+  animation: nova-rise-soft 620ms var(--motion-ease) both;
+}
+
+.board-column:nth-child(1) {
+  animation-delay: 90ms;
+}
+
+.board-column:nth-child(2) {
+  animation-delay: 145ms;
+}
+
+.board-column:nth-child(3) {
+  animation-delay: 200ms;
+}
+
+.board-task {
+  animation: nova-kanban-enter 520ms var(--motion-ease) both;
+}
+
+.board-task:nth-of-type(1) {
+  animation-delay: 50ms;
+}
+
+.board-task:nth-of-type(2) {
+  animation-delay: 90ms;
+}
+
+.board-task:nth-of-type(3) {
+  animation-delay: 130ms;
+}
+
+.board-task:nth-of-type(4) {
+  animation-delay: 170ms;
+}
+
+.board-task:nth-of-type(5) {
+  animation-delay: 210ms;
+}
+
+.board-task:hover .task-grip {
+  color: var(--accent);
+  animation: nova-grip-wiggle 420ms ease both;
+}
+
+.color-picks button:hover {
+  transform: scale(1.35);
+  box-shadow: 0 0 14px currentColor;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Calendar                                                                   */
+/* -------------------------------------------------------------------------- */
+
+@keyframes nova-day-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes nova-today-pulse {
+  0%,
+  100% {
+    box-shadow: inset 0 0 0 1px rgba(223, 255, 0, 0.05);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 0 1px rgba(223, 255, 0, 0.22),
+      0 0 18px rgba(223, 255, 0, 0.055);
+  }
+}
+
+@keyframes nova-event-enter {
+  0% {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.month-grid button {
+  animation: nova-day-enter 420ms var(--motion-spring) both;
+}
+
+.month-grid button:nth-child(7n + 1) {
+  animation-delay: 35ms;
+}
+
+.month-grid button:nth-child(7n + 2) {
+  animation-delay: 70ms;
+}
+
+.month-grid button:nth-child(7n + 3) {
+  animation-delay: 105ms;
+}
+
+.month-grid button:nth-child(7n + 4) {
+  animation-delay: 140ms;
+}
+
+.month-grid button:nth-child(7n + 5) {
+  animation-delay: 175ms;
+}
+
+.month-grid button:nth-child(7n + 6) {
+  animation-delay: 210ms;
+}
+
+.month-grid button:nth-child(7n + 7) {
+  animation-delay: 245ms;
+}
+
+.month-grid button.today {
+  animation-name: nova-day-enter, nova-today-pulse;
+  animation-duration: 420ms, 2.8s;
+  animation-timing-function: var(--motion-spring), ease-in-out;
+  animation-fill-mode: both, both;
+  animation-iteration-count: 1, infinite;
+}
+
+.month-grid button.selected {
+  animation: nova-scale-in 380ms var(--motion-spring) both;
+}
+
+.month-head button:hover {
+  transform: translateX(-2px) scale(1.06);
+}
+
+.month-head button:last-child:hover {
+  transform: translateX(2px) scale(1.06);
+}
+
+.day-events article {
+  animation: nova-event-enter 520ms var(--motion-ease) both;
+}
+
+.day-events article:nth-child(1) {
+  animation-delay: 60ms;
+}
+
+.day-events article:nth-child(2) {
+  animation-delay: 110ms;
+}
+
+.day-events article:nth-child(3) {
+  animation-delay: 160ms;
+}
+
+.day-events article:nth-child(4) {
+  animation-delay: 210ms;
+}
+
+.day-events article:hover {
+  transform: translateX(3px);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Achievements                                                               */
+/* -------------------------------------------------------------------------- */

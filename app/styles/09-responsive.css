@@ -1,0 +1,366 @@
+/* NOVA styles · 09-responsive.css */
+.focus-grid,
+.project-overview,
+.metric-row,
+.calendar-layout,
+.level-hero,
+.account-card {
+  animation-delay: 70ms;
+}
+
+@media (max-width: 1100px) {
+  .app-shell {
+    grid-template-columns: 92px 1fr;
+  }
+
+  .sidebar {
+    width: 92px;
+    padding-inline: 14px;
+    align-items: center;
+  }
+
+  .brand {
+    font-size: 0;
+  }
+
+  .sidebar nav {
+    width: 100%;
+  }
+
+  .nav-item {
+    justify-content: center;
+    font-size: 0;
+  }
+
+  .nav-item i {
+    width: auto;
+    font-size: 10px;
+  }
+
+  .side-ritual,
+  .level-card,
+  .profile > span:nth-child(2),
+  .profile b {
+    display: none;
+  }
+
+  .profile {
+    margin-top: auto;
+  }
+
+  .workspace {
+    width: calc(100vw - 92px);
+  }
+
+  .focus-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .side-stack {
+    grid-template-columns: 1fr 0.8fr;
+    grid-template-rows: auto;
+  }
+}
+
+@media (max-width: 760px) {
+  body::before {
+    background-size: 44px 44px;
+  }
+
+  .app-shell {
+    display: block;
+  }
+
+  .app-shell::after {
+    width: 400px;
+    height: 400px;
+  }
+
+  .sidebar {
+    inset: auto 10px 10px;
+    width: calc(100% - 20px);
+    height: 70px;
+    padding: 8px 10px;
+    flex-direction: row;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 22px;
+    background: rgba(15, 19, 16, 0.9);
+    box-shadow: 0 18px 55px rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(28px) saturate(130%);
+  }
+
+  .sidebar::before,
+  .brand,
+  .profile,
+  .side-ritual,
+  .level-card {
+    display: none;
+  }
+
+  .sidebar nav,
+  .inner-app .sidebar nav {
+    display: flex;
+    width: 100%;
+    margin: 0;
+    gap: 3px;
+    overflow-x: auto;
+  }
+
+  .nav-item,
+  .inner-app .nav-item {
+    flex: 1 0 48px;
+    min-height: 50px;
+    padding: 8px 5px;
+    border-radius: 15px;
+  }
+
+  .nav-item:hover {
+    transform: none;
+  }
+
+  .nav-item.active {
+    box-shadow: inset 0 -2px var(--accent);
+  }
+
+  .workspace,
+  .inner-workspace {
+    width: 100%;
+    padding: 18px 16px 100px;
+  }
+
+  .topbar {
+    min-height: 62px;
+  }
+
+  .hero-copy {
+    margin: 62px 0 38px;
+  }
+
+  .hero-copy::before {
+    display: none;
+  }
+
+  h1 {
+    font-size: clamp(48px, 14vw, 68px);
+  }
+
+  .hero-copy > p {
+    max-width: 92%;
+    font-size: 12px;
+  }
+
+  .focus-grid,
+  .side-stack,
+  .insights {
+    grid-template-columns: 1fr;
+  }
+
+  .timer-card {
+    min-height: 530px;
+    padding: 21px 16px;
+    border-radius: 23px;
+  }
+
+  .orbit {
+    width: min(74vw, 270px);
+  }
+
+  .timer-core strong {
+    font-size: 59px;
+  }
+
+  .mode-tabs button {
+    min-width: 0;
+  }
+
+  .task-card,
+  .sound-card {
+    border-radius: 21px;
+  }
+
+  .insight-stat,
+  .quote-card,
+  .progress-card {
+    min-height: 178px;
+  }
+
+  .page-title {
+    min-height: 300px;
+    padding: 72px 0 38px;
+  }
+
+  .page-title h1 {
+    font-size: clamp(49px, 15vw, 70px);
+  }
+
+  .breadcrumb {
+    top: 18px;
+  }
+
+  .project-overview,
+  .badge-grid,
+  .account-grid,
+  .settings-page-grid,
+  .analytics-main,
+  .analytics-lower {
+    grid-template-columns: 1fr;
+  }
+
+  .project-tile {
+    min-height: 160px;
+  }
+
+  .project-detail,
+  .big-chart,
+  .focus-score,
+  .category-panel,
+  .heat-panel,
+  .month-panel,
+  .day-planner {
+    padding: 18px 14px;
+  }
+
+  .metric-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .metric-row > div {
+    min-height: 118px;
+    padding: 16px;
+  }
+
+  .calendar-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .month-grid {
+    gap: 4px;
+  }
+
+  .month-grid button {
+    padding: 6px;
+    border-radius: 9px;
+  }
+
+  .level-hero {
+    padding: 24px 18px;
+  }
+
+  .timeline-items article {
+    padding-inline: 12px;
+  }
+
+  .account-card {
+    padding: 22px;
+  }
+
+  .command-trigger {
+    right: 16px;
+    bottom: 91px;
+  }
+}
+
+@media (max-width: 430px) {
+  .top-actions {
+    gap: 6px;
+  }
+
+  .top-actions button {
+    min-width: 35px;
+    height: 35px;
+    padding-inline: 9px;
+  }
+
+  .hero-copy {
+    margin-top: 52px;
+  }
+
+  .kicker {
+    font-size: 8px;
+  }
+
+  h1 {
+    font-size: 48px;
+  }
+
+  .timer-card {
+    min-height: 510px;
+  }
+
+  .timer-actions {
+    flex-wrap: wrap;
+  }
+
+  .sound-options {
+    gap: 5px;
+  }
+
+  .sound-options button {
+    padding-inline: 2px;
+  }
+
+  .achievement-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .achievement {
+    min-height: 82px;
+  }
+
+  .history-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .history-summary > div {
+    min-height: 96px;
+  }
+
+  .metric-row {
+    grid-template-columns: 1fr;
+  }
+
+  .metric-row > div {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .metric-row > div:last-child {
+    border-bottom: 0;
+  }
+
+  .month-grid button {
+    font-size: 7px;
+  }
+
+  .command-trigger span {
+    display: none;
+  }
+}
+
+@media (hover: none) {
+  .project-tile:hover,
+  .board-task:hover,
+  .quote-card:hover,
+  .timer-card:hover,
+  .task-card:hover,
+  .sound-card:hover {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .timer-card::before {
+    animation: none;
+  }
+
+  .hero-copy,
+  .page-title > div,
+  .focus-grid,
+  .project-overview,
+  .metric-row,
+  .calendar-layout,
+  .level-hero,
+  .account-card {
+    animation: none;
+  }
+}

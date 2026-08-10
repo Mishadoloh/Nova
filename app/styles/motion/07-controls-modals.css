@@ -1,0 +1,259 @@
+/* NOVA motion · 07-controls-modals.css */
+@keyframes nova-toggle-glow {
+  0% {
+    box-shadow: 0 0 0 rgba(223, 255, 0, 0);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(223, 255, 0, 0.22);
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(223, 255, 0, 0);
+  }
+}
+
+.settings-group {
+  animation: nova-card-enter 680ms var(--motion-ease) both;
+}
+
+.settings-group:nth-child(1) {
+  animation-delay: 80ms;
+}
+
+.settings-group:nth-child(2) {
+  animation-delay: 140ms;
+}
+
+.settings-group:nth-child(3) {
+  animation-delay: 200ms;
+}
+
+.settings-field,
+.settings-switch,
+.setting-row,
+.toggle-row {
+  animation: nova-rise-soft 460ms var(--motion-ease) both;
+}
+
+.settings-field:nth-of-type(1),
+.settings-switch:nth-of-type(1),
+.setting-row:nth-of-type(1),
+.toggle-row:nth-of-type(1) {
+  animation-delay: 70ms;
+}
+
+.settings-field:nth-of-type(2),
+.settings-switch:nth-of-type(2),
+.setting-row:nth-of-type(2),
+.toggle-row:nth-of-type(2) {
+  animation-delay: 115ms;
+}
+
+.settings-field:nth-of-type(3),
+.settings-switch:nth-of-type(3),
+.setting-row:nth-of-type(3),
+.toggle-row:nth-of-type(3) {
+  animation-delay: 160ms;
+}
+
+.settings-switch input:checked + i,
+.toggle-row input:checked + i {
+  animation: nova-toggle-glow 520ms ease both;
+}
+
+.settings-switch input:checked + i::after,
+.toggle-row input:checked + i::after {
+  animation: nova-toggle-on 420ms var(--motion-spring) both;
+}
+
+.settings-field button:hover,
+.setting-row button:hover {
+  transform: rotate(8deg) scale(1.12);
+}
+
+.settings-save button:hover,
+.save-settings:hover,
+.event-form > button:hover,
+.project-toolbar form button:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(223, 255, 0, 0.17);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Modals and command palette                                                 */
+/* -------------------------------------------------------------------------- */
+
+@keyframes nova-backdrop-in {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(24px);
+  }
+}
+
+@keyframes nova-modal-in {
+  0% {
+    opacity: 0;
+    transform: translateY(22px) scale(0.96);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1.005);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes nova-command-row {
+  0% {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.modal-backdrop,
+.command-backdrop,
+.onboarding-backdrop {
+  animation: nova-backdrop-in 280ms ease both;
+}
+
+.settings-modal,
+.command-panel,
+.onboarding-card {
+  animation: nova-modal-in 560ms var(--motion-spring) both;
+}
+
+.command-results button {
+  animation: nova-command-row 380ms var(--motion-ease) both;
+}
+
+.command-results button:nth-child(2) {
+  animation-delay: 35ms;
+}
+
+.command-results button:nth-child(3) {
+  animation-delay: 65ms;
+}
+
+.command-results button:nth-child(4) {
+  animation-delay: 95ms;
+}
+
+.command-results button:nth-child(5) {
+  animation-delay: 125ms;
+}
+
+.command-results button:nth-child(6) {
+  animation-delay: 155ms;
+}
+
+.command-results button:nth-child(7) {
+  animation-delay: 185ms;
+}
+
+.command-results button:nth-child(8) {
+  animation-delay: 215ms;
+}
+
+.command-trigger {
+  animation: nova-scale-in 520ms var(--motion-spring) 420ms both;
+}
+
+.modal-close:hover {
+  transform: rotate(90deg) scale(1.08);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Buttons and micro-interactions                                             */
+/* -------------------------------------------------------------------------- */
+
+@keyframes nova-button-flash {
+  0% {
+    opacity: 0;
+    transform: translateX(-130%) skewX(-20deg);
+  }
+  25% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(250%) skewX(-20deg);
+  }
+}
+
+.start-button,
+.save-settings,
+.settings-save button,
+.event-form > button,
+.project-toolbar form button,
+.onboarding-card > button {
+  position: relative;
+  overflow: hidden;
+}
+
+.start-button::after,
+.save-settings::after,
+.settings-save button::after,
+.event-form > button::after,
+.project-toolbar form button::after,
+.onboarding-card > button::after {
+  content: "";
+  position: absolute;
+  inset: -20% auto -20% -35%;
+  width: 28%;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.55),
+    transparent
+  );
+  opacity: 0;
+  transform: translateX(-130%) skewX(-20deg);
+}
+
+.start-button:hover::after,
+.save-settings:hover::after,
+.settings-save button:hover::after,
+.event-form > button:hover::after,
+.project-toolbar form button:hover::after,
+.onboarding-card > button:hover::after {
+  animation: nova-button-flash 760ms var(--motion-ease) both;
+}
+
+.check,
+.month-head button,
+.sound-stop,
+.modal-close,
+.settings-field button,
+.setting-row button {
+  transition:
+    transform var(--motion-base) var(--motion-spring),
+    color var(--motion-fast) ease,
+    border-color var(--motion-fast) ease,
+    background-color var(--motion-fast) ease,
+    box-shadow var(--motion-fast) ease;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Scroll-driven reveals                                                      */
+/* -------------------------------------------------------------------------- */
+
+@keyframes nova-view-reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.985);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

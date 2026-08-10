@@ -1,0 +1,312 @@
+/* NOVA styles · 05-premium-foundation.css */
+@property --glow-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+:root {
+  --ink: #f7f9f2;
+  --muted: #929991;
+  --muted-2: #646b65;
+  --line: rgba(240, 255, 226, 0.1);
+  --line-bright: rgba(240, 255, 226, 0.18);
+  --panel: rgba(20, 24, 21, 0.78);
+  --panel-solid: #151917;
+  --panel-raised: #1a1f1c;
+  --black: #080a09;
+  --black-soft: #0d100e;
+  --accent: #dfff00;
+  --accent-soft: color-mix(in srgb, var(--accent) 12%, transparent);
+  --accent-faint: color-mix(in srgb, var(--accent) 5%, transparent);
+  --shadow-sm: 0 10px 35px rgba(0, 0, 0, 0.22);
+  --shadow-lg: 0 35px 100px rgba(0, 0, 0, 0.5);
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 26px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html {
+  color-scheme: dark;
+  background: var(--black);
+  scrollbar-color: #343a35 var(--black);
+}
+
+body {
+  min-width: 320px;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 82% -10%, rgba(223, 255, 0, 0.08), transparent 32%),
+    radial-gradient(circle at 10% 72%, rgba(120, 214, 255, 0.035), transparent 28%),
+    var(--black);
+  font-feature-settings: "ss01", "ss02", "cv01";
+  text-rendering: geometricPrecision;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(to bottom, black, transparent 80%);
+}
+
+::selection {
+  color: #0a0c0b;
+  background: var(--accent);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: #373d38;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4b534c;
+  background-clip: padding-box;
+}
+
+button,
+a,
+input,
+select {
+  transition:
+    color 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease,
+    opacity 180ms ease,
+    box-shadow 220ms ease,
+    transform 220ms var(--ease-out);
+}
+
+button:active,
+a:active {
+  transform: scale(0.98);
+}
+
+input::placeholder {
+  color: #555c56;
+}
+
+.app-shell {
+  grid-template-columns: 248px 1fr;
+  background:
+    radial-gradient(circle at 78% 0%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 30%),
+    linear-gradient(145deg, #090b0a 0%, #0d100e 48%, #090b0a 100%);
+}
+
+.app-shell::after {
+  content: "";
+  position: fixed;
+  top: -260px;
+  right: -220px;
+  width: 640px;
+  height: 640px;
+  pointer-events: none;
+  border: 1px solid color-mix(in srgb, var(--accent) 10%, transparent);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 80px color-mix(in srgb, var(--accent) 1.7%, transparent),
+    0 0 0 160px color-mix(in srgb, var(--accent) 1%, transparent);
+}
+
+.noise {
+  opacity: 0.022;
+  mix-blend-mode: screen;
+}
+
+.sidebar {
+  width: 248px;
+  padding: 30px 22px 22px;
+  border-right-color: rgba(240, 255, 226, 0.08);
+  background:
+    linear-gradient(180deg, rgba(17, 20, 18, 0.96), rgba(10, 12, 11, 0.9)),
+    var(--black);
+  box-shadow: 18px 0 60px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(28px) saturate(125%);
+}
+
+.sidebar::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 170px;
+  pointer-events: none;
+  background: radial-gradient(circle at 20% 0%, var(--accent-soft), transparent 64%);
+  opacity: 0.55;
+}
+
+.brand {
+  position: relative;
+  min-height: 42px;
+  font-size: 22px;
+  letter-spacing: 0.1em;
+}
+
+.brand span {
+  width: 36px;
+  height: 36px;
+  border-radius: 50% 50% 45% 58%;
+  font-size: 16px;
+  box-shadow:
+    0 0 0 5px rgba(223, 255, 0, 0.04),
+    0 10px 28px rgba(223, 255, 0, 0.16);
+  transform: rotate(-6deg);
+}
+
+.brand:hover span {
+  transform: rotate(0deg) scale(1.04);
+}
+
+.sidebar nav {
+  position: relative;
+  gap: 7px;
+  margin-top: 58px;
+}
+
+.nav-item {
+  min-height: 48px;
+  padding: 13px 15px;
+  border: 1px solid transparent;
+  border-radius: 13px;
+  color: #777f78;
+  font-size: 12px;
+  letter-spacing: 0.01em;
+}
+
+.nav-item i {
+  width: 22px;
+  color: #525953;
+  font-size: 9px;
+  font-style: normal;
+}
+
+.nav-item:hover {
+  color: #d9ddd6;
+  border-color: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.035);
+  transform: translateX(3px);
+}
+
+.nav-item.active {
+  color: white;
+  border-color: color-mix(in srgb, var(--accent) 18%, transparent);
+  background:
+    linear-gradient(90deg, var(--accent-soft), rgba(255, 255, 255, 0.025));
+  box-shadow:
+    inset 3px 0 var(--accent),
+    0 10px 28px rgba(0, 0, 0, 0.18);
+}
+
+.nav-item.active i {
+  color: var(--accent);
+}
+
+.side-ritual,
+.level-card {
+  border-color: rgba(255, 255, 255, 0.09);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 15% 0%, var(--accent-faint), transparent 58%),
+    rgba(255, 255, 255, 0.025);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.035);
+}
+
+.side-ritual {
+  position: relative;
+  overflow: hidden;
+  padding: 18px;
+}
+
+.side-ritual::after {
+  content: "↗";
+  position: absolute;
+  right: 14px;
+  bottom: 10px;
+  color: var(--accent);
+  font-size: 20px;
+  opacity: 0.12;
+}
+
+.side-ritual p {
+  margin: 12px 0 18px;
+  color: #858d86;
+}
+
+.side-ritual a:hover {
+  letter-spacing: 0.04em;
+}
+
+.profile {
+  min-height: 50px;
+  margin-inline: -8px;
+  padding: 8px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+}
+
+.profile:hover {
+  border-color: var(--line);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.profile .avatar {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(145deg, #333a34, #202421);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.workspace {
+  width: min(1320px, calc(100vw - 248px));
+  padding-inline: clamp(34px, 5.2vw, 84px);
+}
+
+.inner-workspace {
+  isolation: isolate;
+}
+
+.topbar {
+  min-height: 74px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+}
+
+.topbar p {
+  color: #b1b7af;
+  font-size: 11px;
+}
+
+.top-actions button {
+  min-width: 38px;
+  border-color: rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.025);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.025);
+}
+
+.top-actions button:hover {
+  color: white;
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.055);
+  transform: translateY(-2px);
+}
+
+.top-actions .status {
+  padding-inline: 15px;
+}

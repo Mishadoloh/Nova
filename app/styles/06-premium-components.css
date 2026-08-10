@@ -1,0 +1,299 @@
+/* NOVA styles · 06-premium-components.css */
+.hero-copy {
+  position: relative;
+  margin: 88px 0 56px;
+}
+
+.hero-copy::before {
+  content: "FOCUS / FLOW / FINISH";
+  position: absolute;
+  top: -36px;
+  right: 0;
+  color: rgba(255, 255, 255, 0.055);
+  font: 9px var(--font-geist-mono);
+  letter-spacing: 0.24em;
+  writing-mode: vertical-rl;
+}
+
+.kicker,
+.eyebrow {
+  font-weight: 550;
+  letter-spacing: 0.17em;
+}
+
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.kicker::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent);
+}
+
+h1 {
+  max-width: 900px;
+  margin: 20px 0 24px;
+  font-size: clamp(54px, 7.2vw, 104px);
+  line-height: 0.88;
+  letter-spacing: -0.072em;
+  text-wrap: balance;
+}
+
+h1 em {
+  position: relative;
+  text-shadow: 0 0 45px color-mix(in srgb, var(--accent) 13%, transparent);
+}
+
+.hero-copy > p {
+  max-width: 470px;
+  color: #858c86;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.timer-card,
+.task-card,
+.sound-card,
+.insight-stat,
+.quote-card,
+.progress-card,
+.week-chart,
+.best-time,
+.month-panel,
+.day-planner,
+.big-chart,
+.focus-score,
+.category-panel,
+.heat-panel,
+.project-detail,
+.account-card,
+.settings-group {
+  border-color: rgba(240, 255, 226, 0.105);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.028), transparent 48%),
+    var(--panel);
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.035),
+    var(--shadow-sm);
+  backdrop-filter: blur(22px) saturate(115%);
+}
+
+.timer-card,
+.task-card,
+.sound-card,
+.insight-stat,
+.progress-card,
+.week-chart,
+.best-time,
+.project-tile,
+.badge-card,
+.settings-group,
+.account-grid article {
+  transition:
+    transform 260ms var(--ease-out),
+    border-color 220ms ease,
+    box-shadow 260ms ease,
+    background-color 220ms ease;
+}
+
+.timer-card:hover,
+.task-card:hover,
+.sound-card:hover,
+.week-chart:hover,
+.best-time:hover,
+.insight-stat:hover,
+.progress-card:hover {
+  border-color: rgba(240, 255, 226, 0.16);
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.05),
+    0 24px 70px rgba(0, 0, 0, 0.28);
+}
+
+.focus-grid {
+  grid-template-columns: minmax(0, 1.2fr) minmax(330px, 0.8fr);
+  gap: 18px;
+}
+
+.timer-card {
+  min-height: 570px;
+  padding: 28px;
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(circle at 50% 44%, var(--accent-faint), transparent 34%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.035), transparent 50%),
+    rgba(18, 22, 19, 0.88);
+}
+
+.timer-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from var(--glow-angle),
+    transparent 0 42%,
+    color-mix(in srgb, var(--accent) 26%, transparent) 48%,
+    transparent 54% 100%
+  );
+  animation: card-orbit 12s linear infinite;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+.timer-card::after {
+  width: 300px;
+  height: 300px;
+  right: -165px;
+  bottom: -165px;
+  border-color: color-mix(in srgb, var(--accent) 15%, transparent);
+  box-shadow: 0 0 60px color-mix(in srgb, var(--accent) 3%, transparent);
+}
+
+@keyframes card-orbit {
+  to {
+    --glow-angle: 360deg;
+  }
+}
+
+.mode-tabs {
+  margin-top: 28px;
+  padding: 5px;
+  border-color: rgba(255, 255, 255, 0.09);
+  background: rgba(0, 0, 0, 0.18);
+  box-shadow: inset 0 1px 8px rgba(0, 0, 0, 0.3);
+}
+
+.mode-tabs button {
+  min-width: 112px;
+  padding: 8px 14px;
+}
+
+.mode-tabs button.selected {
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+.orbit {
+  width: 300px;
+  background:
+    conic-gradient(
+      from -90deg,
+      var(--accent) var(--progress),
+      rgba(255, 255, 255, 0.07) 0
+    );
+  box-shadow:
+    0 0 90px color-mix(in srgb, var(--accent) 8%, transparent),
+    inset 0 0 35px rgba(0, 0, 0, 0.35);
+}
+
+.orbit::before {
+  inset: 3px;
+  background:
+    radial-gradient(circle, #171c18 0%, #111512 67%, #0d100e 100%);
+  box-shadow: inset 0 0 45px rgba(0, 0, 0, 0.35);
+}
+
+.orbit::after {
+  width: 9px;
+  height: 9px;
+  top: -3px;
+  box-shadow:
+    0 0 8px var(--accent),
+    0 0 24px var(--accent);
+}
+
+.timer-core strong {
+  margin-block: 14px 7px;
+  font-size: 70px;
+  font-weight: 450;
+  letter-spacing: -0.09em;
+  text-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+}
+
+.timer-core small {
+  color: #7b827b;
+}
+
+.start-button {
+  min-height: 52px;
+  padding-right: 25px;
+  font-size: 12px;
+  box-shadow:
+    0 12px 35px color-mix(in srgb, var(--accent) 19%, transparent),
+    inset 0 1px rgba(255, 255, 255, 0.4);
+}
+
+.start-button span {
+  width: 34px;
+  height: 34px;
+}
+
+.start-button:hover {
+  transform: translateY(-3px) scale(1.015);
+  box-shadow:
+    0 18px 46px color-mix(in srgb, var(--accent) 25%, transparent),
+    inset 0 1px rgba(255, 255, 255, 0.45);
+}
+
+.zen-button:hover {
+  color: white;
+  border-color: var(--line-bright);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.side-stack {
+  gap: 18px;
+}
+
+.task-card {
+  min-height: 474px;
+  padding: 24px;
+  border-radius: var(--radius-lg);
+}
+
+.card-title h2,
+.sound-heading h2 {
+  font-size: 19px;
+}
+
+.counter {
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: var(--accent-faint);
+}
+
+.project-tabs button:hover {
+  color: white;
+  border-color: var(--line-bright);
+  transform: translateY(-1px);
+}
+
+.task-list {
+  gap: 2px;
+  margin-block: 16px;
+}
+
+.task {
+  min-height: 50px;
+  padding: 10px 7px;
+  border-radius: 9px;
+  border-bottom-color: rgba(255, 255, 255, 0.045);
+}
+
+.task:hover {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.check {
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+}

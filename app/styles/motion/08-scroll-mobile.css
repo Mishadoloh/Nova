@@ -1,0 +1,125 @@
+/* NOVA motion · 08-scroll-mobile.css */
+@supports (animation-timeline: view()) {
+  .analytics-section,
+  .achievements-section,
+  .summary-strip,
+  .collection-head,
+  .badge-grid,
+  .timeline-day {
+    animation-name: nova-view-reveal;
+    animation-duration: 1ms;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-timeline: view();
+    animation-range: entry 5% cover 24%;
+  }
+
+  .project-detail,
+  .analytics-lower,
+  .account-grid,
+  .settings-save {
+    animation-name: nova-view-reveal;
+    animation-duration: 1ms;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-timeline: view();
+    animation-range: entry 8% cover 28%;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Mobile motion tuning                                                       */
+/* -------------------------------------------------------------------------- */
+
+@media (max-width: 760px) {
+  .sidebar {
+    animation: nova-rise-soft 520ms var(--motion-ease) 180ms both;
+  }
+
+  .nav-item {
+    animation-name: nova-scale-in;
+    animation-duration: 420ms;
+    animation-timing-function: var(--motion-spring);
+  }
+
+  .nav-item:nth-child(1) {
+    animation-delay: 200ms;
+  }
+
+  .nav-item:nth-child(2) {
+    animation-delay: 235ms;
+  }
+
+  .nav-item:nth-child(3) {
+    animation-delay: 270ms;
+  }
+
+  .nav-item:nth-child(4) {
+    animation-delay: 305ms;
+  }
+
+  .nav-item:nth-child(5) {
+    animation-delay: 340ms;
+  }
+
+  .nav-item:nth-child(6) {
+    animation-delay: 375ms;
+  }
+
+  .nav-item:nth-child(7) {
+    animation-delay: 410ms;
+  }
+
+  .app-shell::after {
+    animation-duration: 24s;
+  }
+
+  .orbit {
+    animation-duration: 6.5s;
+  }
+
+  .project-tile,
+  .board-task,
+  .achievement,
+  .badge-card {
+    animation-duration: 520ms;
+  }
+
+  .command-trigger {
+    animation-delay: 520ms;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Motion accessibility                                                       */
+/* -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    transition-delay: 0ms !important;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+
+  .orbit,
+  .app-shell::after,
+  .noise,
+  body::before,
+  .brand span,
+  .achievement.unlocked > i,
+  .badge-card.unlocked .badge-mark,
+  .level-orbit,
+  .account-avatar {
+    transform: none !important;
+  }
+}
