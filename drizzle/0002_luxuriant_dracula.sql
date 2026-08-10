@@ -1,0 +1,1 @@
+ALTER TABLE `user_preferences` ADD `daily_goal_minutes` integer DEFAULT 120 NOT NULL;

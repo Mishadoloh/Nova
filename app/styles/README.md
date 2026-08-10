@@ -17,6 +17,7 @@ The application keeps two tiny public entry points:
 8. `08-page-polish.css` — page-specific visual details.
 9. `09-responsive.css` — layout breakpoints.
 10. `10-quality-pass.css` — accessibility, interaction consistency and final safeguards.
+11. `11-product-functionality.css` — functional controls for tasks, goals and session history.
 
 ## Motion cascade
 

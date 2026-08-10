@@ -6,14 +6,14 @@ import { AudioMixer } from "./components/AudioMixer";
 type Project = { id: string; name: string; color: string; createdAt: number };
 type Task = { id: string; projectId: string; text: string; done: boolean; createdAt: number };
 type Session = { id: string; projectId: string; startedAt: number; durationSeconds: number };
-type Preferences = { focusMinutes: number; breakMinutes: number; autoPomodoro: boolean };
+type Preferences = { focusMinutes: number; breakMinutes: number; autoPomodoro: boolean; dailyGoalMinutes: number };
 type Account = { displayName: string; email: string };
 
 const now = Date.now();
 const defaultProjects: Project[] = [];
 const defaultTasks: Task[] = [];
 const defaultSessions: Session[] = [];
-const defaultPreferences: Preferences = { focusMinutes: 25, breakMinutes: 5, autoPomodoro: false };
+const defaultPreferences: Preferences = { focusMinutes: 25, breakMinutes: 5, autoPomodoro: false, dailyGoalMinutes: 120 };
 const colors = ["#dfff00", "#78d6ff", "#ff7a5c", "#c7a7ff", "#ffd66b"];
 
 function uid(prefix: string) {
@@ -53,7 +53,7 @@ export default function Home() {
         if (data.tasks) setTasks(data.tasks);
         if (data.sessions) setSessions(data.sessions);
         if (data.preferences) {
-          setPreferences(data.preferences);
+          setPreferences({ ...defaultPreferences, ...data.preferences });
           setSeconds(data.preferences.focusMinutes * 60);
         }
       } catch { /* offline cache is optional */ }
@@ -67,7 +67,7 @@ export default function Home() {
       if (data.tasks?.length) setTasks(data.tasks);
       if (data.sessions?.length) setSessions(data.sessions);
       if (data.preferences) {
-        setPreferences(data.preferences);
+        setPreferences({ ...defaultPreferences, ...data.preferences });
         setSeconds(data.preferences.focusMinutes * 60);
       }
       setSyncState("synced");
@@ -214,12 +214,14 @@ export default function Home() {
   const project = projects.find((item) => item.id === activeProject) ?? projects[0];
   const visibleTasks = tasks.filter((task) => task.projectId === activeProject);
   const completed = tasks.filter((task) => task.done).length;
-  const progress = tasks.length ? Math.round((completed / tasks.length) * 100) : 0;
   const totalSeconds = (timerMode === "focus" ? preferences.focusMinutes : preferences.breakMinutes) * 60;
   const timerProgress = totalSeconds ? 1 - seconds / totalSeconds : 0;
   const time = `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
   const date = useMemo(() => new Intl.DateTimeFormat("uk-UA", { weekday: "long", day: "numeric", month: "long" }).format(new Date()), []);
   const totalMinutes = Math.round(sessions.reduce((sum, session) => sum + session.durationSeconds, 0) / 60);
+  const todayStart = new Date(); todayStart.setHours(0,0,0,0);
+  const todayMinutes = Math.round(sessions.filter((session)=>session.startedAt>=todayStart.getTime()).reduce((sum,session)=>sum+session.durationSeconds,0)/60);
+  const goalProgress = Math.min(100,Math.round(todayMinutes/Math.max(1,preferences.dailyGoalMinutes)*100));
   const level = Math.floor(totalMinutes / 120) + 1;
   const activeDays = new Set(sessions.map((session) => new Date(session.startedAt).toDateString()));
   let streak = 0;
@@ -316,7 +318,7 @@ export default function Home() {
           <div className="achievement-grid">{achievements.map((item) => <div className={`achievement ${item.unlocked ? "unlocked" : ""}`} key={item.name}><i>{item.unlocked ? "✓" : item.mark}</i><div><strong>{item.name}</strong><small>{item.unlocked ? "Відкрито" : "Ще попереду"}</small></div></div>)}</div>
         </section>
 
-        <section className="summary-strip"><div className="progress-ring" style={{ "--value": `${progress * 3.6}deg` } as React.CSSProperties}><strong>{progress}%</strong></div><div><span className="eyebrow">Денний прогрес</span><p>{completed === tasks.length && tasks.length ? "Усе виконано. Сильний день!" : `Виконано ${completed} із ${tasks.length} задач`}</p></div><div className="sync-pill"><i className={syncState} />{account ? account.email : "Дані збережено на цьому пристрої"}</div></section>
+        <section className="summary-strip"><div className="progress-ring" style={{ "--value": `${goalProgress * 3.6}deg` } as React.CSSProperties}><strong>{goalProgress}%</strong></div><div><span className="eyebrow">Денна ціль фокусу</span><p>{todayMinutes>=preferences.dailyGoalMinutes?"Ціль виконано. Сильний день!":`${todayMinutes} із ${preferences.dailyGoalMinutes} хв · залишилось ${preferences.dailyGoalMinutes-todayMinutes} хв`}</p></div><div className="daily-task-progress"><span>{completed}/{tasks.length}</span><small>задач виконано</small></div><div className="sync-pill"><i className={syncState} />{account ? account.email : "Дані збережено на цьому пристрої"}</div></section>
         <footer><span>NOVA / 2026</span><p>Менше шуму. Більше сенсу.</p><a href="#top">Нагору ↑</a></footer>
       </section>
 

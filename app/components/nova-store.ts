@@ -6,16 +6,16 @@ export type Project = { id: string; name: string; color: string; deadline?: numb
 export type Task = { id: string; projectId: string; text: string; done: boolean; status?: "todo" | "doing" | "done"; deadline?: number | null; recurrence?: string | null; sortOrder?: number; createdAt: number; updatedAt?: number };
 export type Session = { id: string; projectId: string; startedAt: number; durationSeconds: number };
 export type CalendarEvent = { id: string; projectId?: string | null; title: string; startsAt: number; durationMinutes: number; recurrence?: string | null; completed?: boolean; createdAt: number; updatedAt?: number };
-export type Preferences = { focusMinutes: number; breakMinutes: number; autoPomodoro: boolean };
+export type Preferences = { focusMinutes: number; breakMinutes: number; autoPomodoro: boolean; dailyGoalMinutes: number };
 export type NovaData = { projects: Project[]; tasks: Task[]; sessions: Session[]; events: CalendarEvent[]; preferences: Preferences };
 export type Account = { displayName: string; email: string };
 
-const emptyData: NovaData = { projects: [], tasks: [], sessions: [], events: [], preferences: { focusMinutes: 25, breakMinutes: 5, autoPomodoro: false } };
+const emptyData: NovaData = { projects: [], tasks: [], sessions: [], events: [], preferences: { focusMinutes: 25, breakMinutes: 5, autoPomodoro: false, dailyGoalMinutes: 120 } };
 const cacheKey = "nova-v3-cache";
 const queueKey = "nova-sync-queue";
 
 function normalize(value: Partial<NovaData>): NovaData {
-  return { projects: value.projects ?? [], tasks: value.tasks ?? [], sessions: value.sessions ?? [], events: value.events ?? [], preferences: value.preferences ?? emptyData.preferences };
+  return { projects: value.projects ?? [], tasks: value.tasks ?? [], sessions: value.sessions ?? [], events: value.events ?? [], preferences: { ...emptyData.preferences, ...(value.preferences ?? {}) } };
 }
 
 function mergeByUpdated<T extends { id: string; updatedAt?: number; createdAt?: number; startedAt?: number }>(local: T[], remote: T[]) {
