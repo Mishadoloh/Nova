@@ -1914,3 +1914,144 @@ body::before {
     transform: none !important;
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/* Data-driven animation fixes                                                */
+/* -------------------------------------------------------------------------- */
+
+@property --score-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes nova-score-draw {
+  0% {
+    --score-angle: 0deg;
+  }
+  100% {
+    --score-angle: var(--score-target);
+  }
+}
+
+@keyframes nova-score-aura {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 3px rgba(223, 255, 0, 0.08));
+  }
+  50% {
+    filter: drop-shadow(0 0 12px rgba(223, 255, 0, 0.22));
+  }
+}
+
+@keyframes nova-palette-arrive {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes nova-color-selected {
+  0% {
+    transform: scale(0.72);
+  }
+  65% {
+    transform: scale(1.35);
+  }
+  100% {
+    transform: scale(1.18);
+  }
+}
+
+@keyframes nova-chart-scan {
+  0%,
+  55% {
+    transform: translateX(-110%);
+  }
+  100% {
+    transform: translateX(110%);
+  }
+}
+
+.score-ring {
+  animation:
+    nova-ring-enter 900ms var(--motion-spring) both,
+    nova-score-draw 1150ms var(--motion-ease) 180ms both,
+    nova-score-aura 3.2s ease-in-out 1.4s infinite;
+}
+
+.fourteen-chart {
+  position: relative;
+  overflow: hidden;
+}
+
+.fourteen-chart::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg,transparent,rgba(223,255,0,.035),transparent);
+  transform: translateX(-110%);
+  animation: nova-chart-scan 4.8s ease-in-out 1.2s infinite;
+}
+
+.project-tile-shell {
+  animation: nova-project-enter 680ms var(--motion-ease) both;
+}
+
+.project-tile-shell:nth-child(1) {
+  animation-delay: 70ms;
+}
+
+.project-tile-shell:nth-child(2) {
+  animation-delay: 125ms;
+}
+
+.project-tile-shell:nth-child(3) {
+  animation-delay: 180ms;
+}
+
+.project-tile-shell:nth-child(4) {
+  animation-delay: 235ms;
+}
+
+.project-tile-shell:nth-child(5) {
+  animation-delay: 290ms;
+}
+
+.project-tile-shell:nth-child(6) {
+  animation-delay: 345ms;
+}
+
+.tile-color-picker {
+  animation: nova-palette-arrive 520ms var(--motion-ease) 320ms both;
+}
+
+.tile-color-picker > button {
+  transition:
+    transform 260ms var(--motion-spring),
+    border-color 180ms ease,
+    box-shadow 220ms ease;
+}
+
+.tile-color-picker > button.selected {
+  animation: nova-color-selected 420ms var(--motion-spring) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .score-ring,
+  .fourteen-chart::after,
+  .project-tile-shell,
+  .tile-color-picker,
+  .tile-color-picker > button.selected {
+    animation: none !important;
+  }
+
+  .score-ring {
+    --score-angle: var(--score-target);
+  }
+}

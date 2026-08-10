@@ -275,6 +275,16 @@ a,button,input,select { outline-offset: 3px; }
 .project-tile > div b { display: block; height: 100%; background: var(--project); border-radius: inherit; }
 .project-tile > small { display: block; margin-top: 10px; color: #686d67; font-size: 8px; }
 .project-tile.active { border-color: color-mix(in srgb,var(--project) 38%,transparent); background: color-mix(in srgb,var(--project) 5%,#131614); transform: translateY(-2px); }
+.project-tile-shell { min-width: 0; position: relative; }
+.project-tile-shell .project-tile { width: 100%; min-height: 218px; padding-bottom: 67px; }
+.tile-color-picker { position: absolute; z-index: 3; left: 20px; right: 20px; bottom: 18px; min-height: 30px; display: flex; align-items: center; gap: 7px; padding-top: 13px; border-top: 1px solid rgba(255,255,255,.07); }
+.tile-color-picker > button { width: 16px; height: 16px; padding: 0; border: 2px solid transparent; border-radius: 50%; cursor: pointer; box-shadow: 0 0 0 1px rgba(255,255,255,.08); }
+.tile-color-picker > button:hover { transform: translateY(-2px) scale(1.25); box-shadow: 0 0 13px color-mix(in srgb,var(--project) 45%,transparent); }
+.tile-color-picker > button.selected { border-color: #f7f9f2; transform: scale(1.18); box-shadow: 0 0 0 2px #111512,0 0 14px var(--project); }
+.custom-color { position: relative; width: 18px; height: 18px; margin-left: auto; border: 1px dashed rgba(255,255,255,.3); border-radius: 50%; display: grid; place-items: center; color: #9aa199; cursor: pointer; overflow: hidden; }
+.custom-color:hover { color: var(--project); border-color: var(--project); transform: rotate(90deg) scale(1.12); }
+.custom-color input { position: absolute; inset: -8px; width: 34px; height: 34px; opacity: 0; cursor: pointer; }
+.custom-color span { pointer-events: none; font: 12px var(--font-geist-mono); line-height: 1; }
 .project-detail { margin-top: 15px; padding: 25px; border: 1px solid var(--line); border-radius: 20px; background: var(--panel); }
 .project-detail-head { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
 .project-detail-head strong { font: 15px var(--font-geist-mono); color: var(--accent); }
@@ -309,7 +319,7 @@ a,button,input,select { outline-offset: 3px; }
 .fourteen-chart > div:nth-last-child(-n+3) i { background: var(--accent); }
 .fourteen-chart small { color: #595e59; font: 7px var(--font-geist-mono); }
 .focus-score { text-align: center; }
-.score-ring { width: 135px; aspect-ratio: 1; margin: 20px auto 15px; border-radius: 50%; background: conic-gradient(var(--accent) 302deg,#292d2a 0); display: grid; place-items: center; position: relative; }
+.score-ring { --score-angle: 0deg; --score-target: 0deg; width: 135px; aspect-ratio: 1; margin: 20px auto 15px; border-radius: 50%; background: conic-gradient(from -90deg,var(--accent) var(--score-angle),#292d2a 0); display: grid; place-items: center; position: relative; }
 .score-ring::before { content: ""; position: absolute; inset: 7px; border-radius: 50%; background: #151816; }
 .score-ring strong,.score-ring small { position: relative; z-index: 1; }
 .score-ring strong { font: 38px var(--font-geist-mono); margin-left: 13px; }
