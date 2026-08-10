@@ -302,43 +302,43 @@
   animation: nova-kicker-line 900ms var(--motion-ease) 220ms both;
 }
 
-.heat-grid i {
-  animation: nova-heat-pop 430ms var(--motion-spring) both;
+.heat-cell {
+  animation: nova-heat-pop 430ms var(--motion-spring) backwards;
 }
 
-.heat-grid i:nth-child(7n + 1) {
+.heat-cell:nth-child(7n + 1) {
   animation-delay: 40ms;
 }
 
-.heat-grid i:nth-child(7n + 2) {
+.heat-cell:nth-child(7n + 2) {
   animation-delay: 80ms;
 }
 
-.heat-grid i:nth-child(7n + 3) {
+.heat-cell:nth-child(7n + 3) {
   animation-delay: 120ms;
 }
 
-.heat-grid i:nth-child(7n + 4) {
+.heat-cell:nth-child(7n + 4) {
   animation-delay: 160ms;
 }
 
-.heat-grid i:nth-child(7n + 5) {
+.heat-cell:nth-child(7n + 5) {
   animation-delay: 200ms;
 }
 
-.heat-grid i:nth-child(7n + 6) {
+.heat-cell:nth-child(7n + 6) {
   animation-delay: 240ms;
 }
 
-.heat-grid i:nth-child(7n + 7) {
+.heat-cell:nth-child(7n + 7) {
   animation-delay: 280ms;
 }
 
-.heat-grid i.hot {
+.heat-cell.hot {
   animation-name: nova-heat-pop, nova-hot-cell;
   animation-duration: 430ms, 3s;
   animation-timing-function: var(--motion-spring), ease-in-out;
-  animation-fill-mode: both, both;
+  animation-fill-mode: backwards, both;
   animation-iteration-count: 1, infinite;
 }
 
