@@ -28,6 +28,21 @@
   }
 }
 
+@keyframes nova-score-shell-enter {
+  0% {
+    opacity: 0;
+    transform: scale(0.82);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.025);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 @keyframes nova-score-aura {
   0%,
   100% {
@@ -73,9 +88,17 @@
 
 .score-ring {
   animation:
-    nova-ring-enter 900ms var(--motion-spring) both,
+    nova-score-shell-enter 720ms var(--motion-spring) both,
     nova-score-draw 1150ms var(--motion-ease) 180ms both,
     nova-score-aura 3.2s ease-in-out 1.4s infinite;
+}
+
+.score-ring-value {
+  animation: nova-score-pop 700ms var(--motion-spring) 330ms both;
+}
+
+.score-ring .score-ring-value strong {
+  animation: none;
 }
 
 .fourteen-chart {

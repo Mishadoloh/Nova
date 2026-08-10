@@ -23,8 +23,10 @@
 }
 
 .score-ring {
-  width: 146px;
-  box-shadow: 0 0 48px var(--accent-faint);
+  width: 156px;
+  box-shadow:
+    0 0 48px var(--accent-faint),
+    0 18px 46px rgba(0, 0, 0, 0.22);
 }
 
 .heat-grid i {
