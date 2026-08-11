@@ -6,14 +6,14 @@ import { AudioMixer } from "./components/AudioMixer";
 type Project = { id: string; name: string; color: string; createdAt: number };
 type Task = { id: string; projectId: string; text: string; done: boolean; createdAt: number };
 type Session = { id: string; projectId: string; startedAt: number; durationSeconds: number };
-type Preferences = { focusMinutes: number; breakMinutes: number; autoPomodoro: boolean; dailyGoalMinutes: number };
+type Preferences = { focusMinutes: number; breakMinutes: number; autoPomodoro: boolean; dailyGoalMinutes: number; activeProjectId: string | null; timerMode: "focus" | "break" };
 type Account = { displayName: string; email: string };
 
 const now = Date.now();
 const defaultProjects: Project[] = [];
 const defaultTasks: Task[] = [];
 const defaultSessions: Session[] = [];
-const defaultPreferences: Preferences = { focusMinutes: 25, breakMinutes: 5, autoPomodoro: false, dailyGoalMinutes: 120 };
+const defaultPreferences: Preferences = { focusMinutes: 25, breakMinutes: 5, autoPomodoro: false, dailyGoalMinutes: 120, activeProjectId: null, timerMode: "focus" };
 const colors = ["#dfff00", "#78d6ff", "#ff7a5c", "#c7a7ff", "#ffd66b"];
 
 function uid(prefix: string) {
@@ -40,13 +40,13 @@ function InteractiveBestTime({hours}:{hours:HourPoint[]}) {
 
 export default function Home() {
   const [projects, setProjects] = useState<Project[]>(defaultProjects);
-  const [activeProject, setActiveProject] = useState("work");
+  const [activeProject, setActiveProject] = useState("");
   const [tasks, setTasks] = useState<Task[]>(defaultTasks);
   const [sessions, setSessions] = useState<Session[]>(defaultSessions);
   const [preferences, setPreferences] = useState<Preferences>(defaultPreferences);
   const [account, setAccount] = useState<Account | null>(null);
   const [syncState, setSyncState] = useState<"offline" | "syncing" | "synced">("offline");
-  const [timerMode, setTimerMode] = useState<"focus" | "break">("focus");
+  const [timerMode, setTimerMode] = useState<"focus" | "break">(defaultPreferences.timerMode);
   const [seconds, setSeconds] = useState(defaultPreferences.focusMinutes * 60);
   const [running, setRunning] = useState(false);
   const [newTask, setNewTask] = useState("");
@@ -71,8 +71,9 @@ export default function Home() {
         if (data.tasks) setTasks(data.tasks);
         if (data.sessions) setSessions(data.sessions);
         if (data.preferences) {
-          setPreferences({ ...defaultPreferences, ...data.preferences });
-          setSeconds(data.preferences.focusMinutes * 60);
+          const next={ ...defaultPreferences, ...data.preferences } as Preferences;
+          setPreferences(next);setTimerMode(next.timerMode);setActiveProject(next.activeProjectId??"");
+          setSeconds((next.timerMode === "focus" ? next.focusMinutes : next.breakMinutes) * 60);
         }
       } catch { /* offline cache is optional */ }
     }
@@ -85,15 +86,16 @@ export default function Home() {
       if (data.tasks?.length) setTasks(data.tasks);
       if (data.sessions?.length) setSessions(data.sessions);
       if (data.preferences) {
-        setPreferences({ ...defaultPreferences, ...data.preferences });
-        setSeconds(data.preferences.focusMinutes * 60);
+        const next={ ...defaultPreferences, ...data.preferences } as Preferences;
+        setPreferences(next);setTimerMode(next.timerMode);setActiveProject(next.activeProjectId??"");
+        setSeconds((next.timerMode === "focus" ? next.focusMinutes : next.breakMinutes) * 60);
       }
       setSyncState("synced");
       serverReady.current = true;
     }).catch(() => setSyncState("offline")).finally(() => { hydrated.current = true; });
   }, []);
 
-  useEffect(()=>{if(projects.length&&!projects.some(item=>item.id===activeProject))setActiveProject(projects[0].id)},[projects,activeProject]);
+  useEffect(()=>{if(!projects.length)return;const preferred=projects.some(item=>item.id===preferences.activeProjectId)?preferences.activeProjectId:null,next=preferred??(projects.some(item=>item.id===activeProject)?activeProject:projects[0].id);if(next!==activeProject)setActiveProject(next);if(next!==preferences.activeProjectId)setPreferences(value=>({...value,activeProjectId:next}))},[projects,activeProject,preferences.activeProjectId]);
 
   useEffect(() => {
     if (!hydrated.current) return;
@@ -127,6 +129,7 @@ export default function Home() {
     if (preferences.autoPomodoro) {
       const nextMode = timerMode === "focus" ? "break" : "focus";
       setTimerMode(nextMode);
+      setPreferences((value)=>({...value,timerMode:nextMode}));
       setSeconds((nextMode === "focus" ? preferences.focusMinutes : preferences.breakMinutes) * 60);
       window.setTimeout(() => { completionHandled.current = false; setRunning(true); }, 900);
     }
@@ -196,6 +199,7 @@ export default function Home() {
   const resetTimer = (mode = timerMode) => {
     setRunning(false);
     setTimerMode(mode);
+    setPreferences((value)=>({...value,timerMode:mode}));
     setSeconds((mode === "focus" ? preferences.focusMinutes : preferences.breakMinutes) * 60);
     completionHandled.current = false;
   };
@@ -204,6 +208,11 @@ export default function Home() {
     if (seconds === 0) resetTimer();
     completionHandled.current = false;
     setRunning((value) => !value);
+  };
+
+  const selectProject = (id:string) => {
+    setActiveProject(id);
+    setPreferences((value)=>({...value,activeProjectId:id}));
   };
 
   const addTask = (event: FormEvent) => {
@@ -220,7 +229,7 @@ export default function Home() {
     if (!name) return;
     const project = { id: uid("project"), name, color: colors[projects.length % colors.length], createdAt: Date.now() };
     setProjects((items) => [...items, project]);
-    setActiveProject(project.id);
+    selectProject(project.id);
     setNewProject("");
   };
 
@@ -311,7 +320,7 @@ export default function Home() {
           <div className="side-stack">
             <section className="task-card" id="tasks">
               <div className="card-title"><div><span className="eyebrow">Проєкти</span><h2>Головні задачі</h2></div><span className="counter">{visibleTasks.filter((task) => task.done).length}/{visibleTasks.length}</span></div>
-              <div className="project-tabs">{projects.map((item) => <button key={item.id} type="button" className={activeProject === item.id ? "active" : ""} onClick={() => setActiveProject(item.id)}><i style={{ background: item.color }} />{item.name}</button>)}</div>
+              <div className="project-tabs">{projects.map((item) => <button key={item.id} type="button" className={activeProject === item.id ? "active" : ""} aria-pressed={activeProject===item.id} onClick={() => selectProject(item.id)}><i style={{ background: item.color }} />{item.name}</button>)}</div>
               <form className="new-project" onSubmit={addProject}><input value={newProject} onChange={(event) => setNewProject(event.target.value)} placeholder="Новий проєкт…" /><button type="submit">+</button></form>
               <div className="task-list">{visibleTasks.map((task) => <div className={`task ${task.done ? "done" : ""}`} key={task.id}><button type="button" className="check" aria-label="Змінити статус" onClick={() => setTasks((items) => items.map((item) => item.id === task.id ? { ...item, done: !item.done } : item))}>{task.done ? "✓" : ""}</button><span>{task.text}<small>{project?.name}</small></span><button type="button" className="delete" aria-label="Видалити" onClick={() => setTasks((items) => items.filter((item) => item.id !== task.id))}>×</button></div>)}</div>
               <form className="add-task" onSubmit={addTask}><input value={newTask} onChange={(event) => setNewTask(event.target.value)} placeholder="Додати задачу до проєкту…" aria-label="Нова задача" /><button type="submit" aria-label="Додати задачу">+</button></form>

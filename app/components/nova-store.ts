@@ -6,11 +6,11 @@ export type Project = { id: string; name: string; color: string; deadline?: numb
 export type Task = { id: string; projectId: string; text: string; done: boolean; status?: "todo" | "doing" | "done"; deadline?: number | null; recurrence?: string | null; sortOrder?: number; createdAt: number; updatedAt?: number };
 export type Session = { id: string; projectId: string; startedAt: number; durationSeconds: number };
 export type CalendarEvent = { id: string; projectId?: string | null; title: string; startsAt: number; durationMinutes: number; recurrence?: string | null; completed?: boolean; createdAt: number; updatedAt?: number };
-export type Preferences = { focusMinutes: number; breakMinutes: number; autoPomodoro: boolean; dailyGoalMinutes: number };
+export type Preferences = { focusMinutes: number; breakMinutes: number; autoPomodoro: boolean; dailyGoalMinutes: number; activeProjectId: string | null; timerMode: "focus" | "break" };
 export type NovaData = { projects: Project[]; tasks: Task[]; sessions: Session[]; events: CalendarEvent[]; preferences: Preferences };
 export type Account = { displayName: string; email: string };
 
-const emptyData: NovaData = { projects: [], tasks: [], sessions: [], events: [], preferences: { focusMinutes: 25, breakMinutes: 5, autoPomodoro: false, dailyGoalMinutes: 120 } };
+const emptyData: NovaData = { projects: [], tasks: [], sessions: [], events: [], preferences: { focusMinutes: 25, breakMinutes: 5, autoPomodoro: false, dailyGoalMinutes: 120, activeProjectId: null, timerMode: "focus" } };
 const cacheKey = "nova-v3-cache";
 const queueKey = "nova-sync-queue";
 

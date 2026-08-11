@@ -39,6 +39,8 @@ export const userPreferences = sqliteTable("user_preferences", {
   breakMinutes: integer("break_minutes").notNull().default(5),
   autoPomodoro: integer("auto_pomodoro", { mode: "boolean" }).notNull().default(false),
   dailyGoalMinutes: integer("daily_goal_minutes").notNull().default(120),
+  activeProjectId: text("active_project_id"),
+  timerMode: text("timer_mode").notNull().default("focus"),
   updatedAt: integer("updated_at").notNull().default(0),
 });
 

@@ -19,6 +19,8 @@ export default function SettingsPage() {
     breakMinutes: pause ?? data.preferences.breakMinutes,
     autoPomodoro: auto ?? data.preferences.autoPomodoro,
     dailyGoalMinutes: goal ?? data.preferences.dailyGoalMinutes,
+    activeProjectId: data.preferences.activeProjectId,
+    timerMode: data.preferences.timerMode,
   };
 
   return <AppFrame active="settings">
