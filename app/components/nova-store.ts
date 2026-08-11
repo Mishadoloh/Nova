@@ -13,6 +13,7 @@ export type Account = { displayName: string; email: string };
 const emptyData: NovaData = { projects: [], tasks: [], sessions: [], events: [], preferences: { focusMinutes: 25, breakMinutes: 5, autoPomodoro: false, dailyGoalMinutes: 120, activeProjectId: null, timerMode: "focus" } };
 const cacheKey = "nova-v3-cache";
 const queueKey = "nova-sync-queue";
+const updateEvent = "nova-store-updated";
 
 function normalize(value: Partial<NovaData>): NovaData {
   return { projects: value.projects ?? [], tasks: value.tasks ?? [], sessions: value.sessions ?? [], events: value.events ?? [], preferences: { ...emptyData.preferences, ...(value.preferences ?? {}) } };
@@ -64,11 +65,12 @@ export function useNovaStore() {
     if (cached) { try { setData(normalize(JSON.parse(cached))); } catch { /* optional cache */ } }
     fetchRemote().catch(() => undefined).finally(() => setReady(true));
     const flush = () => { const queued=localStorage.getItem(queueKey); if (queued) { try { push(normalize(JSON.parse(queued))).catch(()=>undefined); } catch { /* invalid queue */ } } };
-    window.addEventListener("online",flush); return () => window.removeEventListener("online",flush);
+    const receive=(event:Event)=>{const next=(event as CustomEvent<NovaData>).detail;if(next)setData(normalize(next))};
+    window.addEventListener("online",flush);window.addEventListener(updateEvent,receive);return () => {window.removeEventListener("online",flush);window.removeEventListener(updateEvent,receive)};
   }, [fetchRemote,push]);
 
   const save = useCallback(async (next: NovaData) => {
-    setData(next); localStorage.setItem(cacheKey,JSON.stringify(next)); localStorage.setItem(queueKey,JSON.stringify(next)); setSyncing(true);
+    setData(next); localStorage.setItem(cacheKey,JSON.stringify(next)); localStorage.setItem(queueKey,JSON.stringify(next)); window.dispatchEvent(new CustomEvent(updateEvent,{detail:next})); setSyncing(true);
     try { await push(next); } catch { /* queued for reconnect */ } finally { setSyncing(false); }
   }, [push]);
 

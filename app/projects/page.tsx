@@ -9,9 +9,9 @@ const columns:[Task["status"],string][]=[["todo","Зробити"],["doing","У 
 
 export default function ProjectsPage(){
   const {data,save,syncing,lastSyncedAt}=useNovaStore();const [selected,setSelected]=useState<string|null>(null);const [draft,setDraft]=useState("");const [projectName,setProjectName]=useState("");const [showArchived,setShowArchived]=useState(false);const [dragging,setDragging]=useState<string|null>(null);
-  const active=selected??data.projects.find(item=>!item.archived)?.id;const project=data.projects.find(item=>item.id===active);const current=data.tasks.filter(task=>task.projectId===active);
+  const preferred=data.projects.some(item=>item.id===data.preferences.activeProjectId)?data.preferences.activeProjectId:null;const active=selected??preferred??data.projects.find(item=>!item.archived)?.id;const project=data.projects.find(item=>item.id===active);const current=data.tasks.filter(task=>task.projectId===active);
   const commit=(projects:Project[],tasks:Task[])=>save({...data,projects,tasks});
-  const addProject=(event:FormEvent)=>{event.preventDefault();const name=projectName.trim();if(!name)return;const stamp=Date.now(),item={id:`project-${stamp}`,name,color:colors[data.projects.length%colors.length],archived:false,createdAt:stamp,updatedAt:stamp};commit([...data.projects,item],data.tasks);setSelected(item.id);setProjectName("")};
+  const addProject=(event:FormEvent)=>{event.preventDefault();const name=projectName.trim();if(!name)return;const stamp=Date.now(),item={id:`project-${stamp}`,name,color:colors[data.projects.length%colors.length],archived:false,createdAt:stamp,updatedAt:stamp};save({...data,projects:[...data.projects,item],preferences:{...data.preferences,activeProjectId:item.id}});setSelected(item.id);setProjectName("")};
   const updateProject=(patch:Partial<Project>)=>project&&commit(data.projects.map(item=>item.id===project.id?{...item,...patch,updatedAt:Date.now()}:item),data.tasks);
   const updateProjectColor=(id:string,color:string)=>commit(data.projects.map(item=>item.id===id?{...item,color,updatedAt:Date.now()}:item),data.tasks);
   const rename=()=>{if(!project)return;const name=window.prompt("Нова назва проєкту",project.name)?.trim();if(name)updateProject({name})};

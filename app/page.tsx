@@ -99,7 +99,7 @@ export default function Home() {
 
   useEffect(() => {
     if (!hydrated.current) return;
-    localStorage.setItem("nova-v2-cache", JSON.stringify({ projects, tasks, sessions, preferences }));
+    let events:unknown[]=[];try{events=JSON.parse(localStorage.getItem("nova-v3-cache")??"{}").events??[]}catch{/* keep an empty event cache */}const snapshot={ projects, tasks, sessions, events, preferences };localStorage.setItem("nova-v2-cache", JSON.stringify(snapshot));localStorage.setItem("nova-v3-cache",JSON.stringify(snapshot));window.dispatchEvent(new CustomEvent("nova-store-updated",{detail:snapshot}));
     if (!serverReady.current || !account) return;
     setSyncState("syncing");
     const timeout = window.setTimeout(() => {
