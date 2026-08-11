@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 type Track = { id: string; name: string; icon: string; src?: string; detail: string; procedural?: boolean };
 type Levels = Record<string, number>;
-type ZoneEngine = { context: AudioContext; output: GainNode; clickTimer: number };
+type ZoneEngine = { context: AudioContext; output: GainNode; timers: number[] };
 
 const tracks: Track[] = [
   { id: "rain", name: "Дощ", icon: "◌", src: "/audio/rain.ogg", detail: "Мʼякий рівний шум" },
@@ -12,7 +12,7 @@ const tracks: Track[] = [
   { id: "forest", name: "Ліс", icon: "⌁", src: "/audio/forest.ogg", detail: "Птахи та листя" },
   { id: "stream", name: "Струмок", icon: "≈", src: "/audio/stream.ogg", detail: "Проточна вода" },
   { id: "wind", name: "Вітер", icon: "∿", src: "/audio/wind.ogg", detail: "Глибокий простір" },
-  { id: "zone", name: "Покинута зона", icon: "⌾", detail: "Дрон, радіошум і дозиметр", procedural: true },
+  { id: "zone", name: "Покинута зона", icon: "⌾", detail: "Крики, мутанти, радіошум", procedural: true },
 ];
 
 const initialLevels: Levels = { rain: 42, cafe: 24, forest: 30, stream: 32, wind: 22, zone: 34 };
@@ -38,7 +38,8 @@ export function AudioMixer() {
   const stopAll = useCallback(() => {
     Object.values(audio.current).forEach((item) => item.pause());
     if (zone.current) {
-      window.clearInterval(zone.current.clickTimer);
+      zone.current.timers.forEach((timer) => window.clearInterval(timer));
+      window.speechSynthesis?.cancel();
       zone.current.context.close().catch(() => undefined);
       zone.current = null;
     }
@@ -57,7 +58,8 @@ export function AudioMixer() {
     return () => {
       Object.values(audio.current).forEach((item) => { item.pause(); item.src = ""; });
       if (zone.current) {
-        window.clearInterval(zone.current.clickTimer);
+        zone.current.timers.forEach((timer) => window.clearInterval(timer));
+        window.speechSynthesis?.cancel();
         zone.current.context.close().catch(() => undefined);
         zone.current = null;
       }
@@ -153,12 +155,61 @@ export function AudioMixer() {
       click.start(now);
       click.stop(now + 0.08);
     }, 430);
-    zone.current = { context, output, clickTimer };
+
+    const playMutant = () => {
+      if (!zone.current) return;
+      const now = context.currentTime;
+      const growl = context.createOscillator();
+      const growlBody = context.createOscillator();
+      const filter = context.createBiquadFilter();
+      const gain = context.createGain();
+      growl.type = "sawtooth";
+      growlBody.type = "square";
+      growl.frequency.setValueAtTime(96 + Math.random() * 22, now);
+      growl.frequency.exponentialRampToValueAtTime(42 + Math.random() * 9, now + 1.45);
+      growlBody.frequency.setValueAtTime(54, now);
+      growlBody.frequency.exponentialRampToValueAtTime(31, now + 1.25);
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(820, now);
+      filter.frequency.exponentialRampToValueAtTime(180, now + 1.5);
+      filter.Q.value = 7;
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.12, now + 0.13);
+      gain.gain.setValueAtTime(0.085, now + 0.68);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.55);
+      growl.connect(filter);
+      growlBody.connect(filter);
+      filter.connect(gain).connect(output);
+      growl.start(now);
+      growlBody.start(now);
+      growl.stop(now + 1.6);
+      growlBody.stop(now + 1.6);
+    };
+
+    const shout = () => {
+      if (!zone.current || !window.speechSynthesis || window.speechSynthesis.speaking) return;
+      const phrases = ["Контакт!", "Мутант праворуч!", "Відходимо!", "До укриття!", "Тримай периметр!", "Аномалія попереду!"];
+      const message = new SpeechSynthesisUtterance(phrases[Math.floor(Math.random() * phrases.length)]);
+      const voices = window.speechSynthesis.getVoices();
+      message.voice = voices.find((voice) => voice.lang.toLowerCase().startsWith("uk")) ?? voices.find((voice) => voice.lang.toLowerCase().startsWith("ru")) ?? null;
+      message.lang = message.voice?.lang || "uk-UA";
+      message.rate = 1.12;
+      message.pitch = 0.58;
+      message.volume = Math.min(0.8, (levels.zone ?? 34) / 100 * master / 100 + 0.18);
+      window.speechSynthesis.speak(message);
+    };
+
+    const mutantTimer = window.setInterval(() => { if (Math.random() < 0.74) playMutant(); }, 10500);
+    const voiceTimer = window.setInterval(() => { if (Math.random() < 0.68) shout(); }, 16500);
+    const firstMutant = window.setTimeout(playMutant, 3800);
+    const firstVoice = window.setTimeout(shout, 7200);
+    zone.current = { context, output, timers: [clickTimer, mutantTimer, voiceTimer, firstMutant, firstVoice] };
   };
 
   const stopZone = () => {
     if (!zone.current) return;
-    window.clearInterval(zone.current.clickTimer);
+    zone.current.timers.forEach((timer) => window.clearInterval(timer));
+    window.speechSynthesis?.cancel();
     zone.current.context.close().catch(() => undefined);
     zone.current = null;
   };
