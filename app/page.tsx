@@ -20,6 +20,24 @@ function uid(prefix: string) {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 }
 
+type WeekPoint = { label:string; minutes:number; date:number; sessions:number };
+type HourPoint = { hour:number; minutes:number; sessions:number };
+
+function InteractiveWeek({items,max}:{items:WeekPoint[];max:number}) {
+  const initial=items.reduce((best,item,index)=>item.minutes>=items[best].minutes?index:best,0);
+  const [pinned,setPinned]=useState(initial);const [hovered,setHovered]=useState<number|null>(null);const refs=useRef<Array<HTMLButtonElement|null>>([]);const activeIndex=hovered??pinned,active=items[activeIndex];
+  const select=(index:number)=>{const next=(index+items.length)%items.length;setPinned(next);refs.current[next]?.focus()};
+  return <div className="week-chart"><div className="week-inspector" aria-live="polite"><div><span className="eyebrow">Обраний день</span><strong>{new Intl.DateTimeFormat("uk-UA",{weekday:"long",day:"numeric",month:"long"}).format(active.date)}</strong></div><div><b>{active.minutes} хв</b><small>{active.sessions} {active.sessions===1?"сесія":"сесій"}</small></div></div><div className="chart-grid" role="group" aria-label="Фокус за останні сім днів" onMouseLeave={()=>setHovered(null)}>{items.map((day,index)=><button type="button" ref={node=>{refs.current[index]=node}} className={`chart-column ${activeIndex===index?"active":""}`} key={day.date} aria-pressed={pinned===index} aria-label={`${day.minutes} хвилин, ${day.sessions} сесій`} onMouseEnter={()=>setHovered(index)} onFocus={()=>setHovered(index)} onBlur={()=>setHovered(null)} onClick={()=>setPinned(index)} onKeyDown={event=>{if(event.key==="ArrowRight"||event.key==="ArrowLeft"){event.preventDefault();select(index+(event.key==="ArrowRight"?1:-1))}}}><span>{day.minutes?`${day.minutes} хв`:""}</span><i style={{height:`${Math.max(4,day.minutes/max*100)}%`}}/><small>{day.label}</small></button>)}</div></div>;
+}
+
+function InteractiveBestTime({hours}:{hours:HourPoint[]}) {
+  const buckets=[0,3,6,9,12,15,18,21].map(hour=>{const points=hours.filter(item=>item.hour>=hour&&item.hour<hour+3);return{hour,minutes:Math.round(points.reduce((sum,item)=>sum+item.minutes,0)),sessions:points.reduce((sum,item)=>sum+item.sessions,0)}});
+  const initial=buckets.reduce((best,item,index)=>item.minutes>=buckets[best].minutes?index:best,0);
+  const [pinned,setPinned]=useState(initial);const [hovered,setHovered]=useState<number|null>(null);const refs=useRef<Array<HTMLButtonElement|null>>([]);const activeIndex=hovered??pinned,active=buckets[activeIndex];
+  const select=(index:number)=>{const next=(index+buckets.length)%buckets.length;setPinned(next);refs.current[next]?.focus()};
+  return <div className="best-time"><span className="eyebrow">Найсильніша година</span><strong>{String(active.hour).padStart(2,"0")}:00</strong><p>{active.minutes?`${active.minutes} хв фокусу · ${active.sessions} ${active.sessions===1?"сесія":"сесій"} у цьому часовому вікні.`:"У цьому часовому вікні ще немає завершених сесій."}</p><div className="hour-line" role="group" aria-label="Фокус за часом доби" onMouseLeave={()=>setHovered(null)}>{buckets.map((bucket,index)=><button type="button" ref={node=>{refs.current[index]=node}} className={`hour-point ${activeIndex===index?"active":""} ${bucket.minutes?"has-data":""}`} key={bucket.hour} aria-pressed={pinned===index} aria-label={`${bucket.hour}:00, ${bucket.minutes} хвилин`} onMouseEnter={()=>setHovered(index)} onFocus={()=>setHovered(index)} onBlur={()=>setHovered(null)} onClick={()=>setPinned(index)} onKeyDown={event=>{if(event.key==="ArrowRight"||event.key==="ArrowLeft"){event.preventDefault();select(index+(event.key==="ArrowRight"?1:-1))}}}><i style={{"--intensity":`${Math.max(.08,bucket.minutes/Math.max(1,...buckets.map(item=>item.minutes)))}`} as React.CSSProperties}/><span>{bucket.hour}</span></button>)}</div></div>;
+}
+
 export default function Home() {
   const [projects, setProjects] = useState<Project[]>(defaultProjects);
   const [activeProject, setActiveProject] = useState("work");
@@ -232,12 +250,11 @@ export default function Home() {
   const weekData = Array.from({ length: 7 }, (_, offset) => {
     const day = new Date(); day.setHours(0, 0, 0, 0); day.setDate(day.getDate() - (6 - offset));
     const next = day.getTime() + 86400000;
-    const minutes = Math.round(sessions.filter((session) => session.startedAt >= day.getTime() && session.startedAt < next).reduce((sum, session) => sum + session.durationSeconds, 0) / 60);
-    return { label: new Intl.DateTimeFormat("uk-UA", { weekday: "short" }).format(day).slice(0, 2), minutes };
+    const daySessions=sessions.filter((session) => session.startedAt >= day.getTime() && session.startedAt < next),minutes=Math.round(daySessions.reduce((sum, session) => sum + session.durationSeconds, 0) / 60);
+    return { label: new Intl.DateTimeFormat("uk-UA", { weekday: "short" }).format(day).slice(0, 2), minutes, date:day.getTime(), sessions:daySessions.length };
   });
   const maxWeek = Math.max(60, ...weekData.map((item) => item.minutes));
-  const hourData = Array.from({ length: 24 }, (_, hour) => ({ hour, minutes: sessions.filter((session) => new Date(session.startedAt).getHours() === hour).reduce((sum, session) => sum + session.durationSeconds / 60, 0) }));
-  const productiveHour = hourData.sort((a, b) => b.minutes - a.minutes)[0]?.hour ?? 9;
+  const hourData = Array.from({ length: 24 }, (_, hour) => {const items=sessions.filter((session) => new Date(session.startedAt).getHours() === hour);return{hour,minutes:items.reduce((sum, session) => sum + session.durationSeconds / 60, 0),sessions:items.length}});
   const achievements = [
     { name: "Перший крок", mark: "01", unlocked: sessions.length >= 1 },
     { name: "Глибока хвиля", mark: "02", unlocked: totalMinutes >= 120 },
@@ -307,8 +324,8 @@ export default function Home() {
         <section className="analytics-section" id="analytics">
           <div className="section-heading"><div><span className="eyebrow">Аналітика</span><h2>Твій ритм цього тижня</h2></div><strong>{Math.floor(totalMinutes / 60)}<small>г</small> {totalMinutes % 60}<small>хв</small></strong></div>
           <div className="analytics-grid">
-            <div className="week-chart"><div className="chart-grid">{weekData.map((day) => <div className="chart-column" key={day.label}><span>{day.minutes ? `${day.minutes} хв` : ""}</span><i style={{ height: `${Math.max(4, day.minutes / maxWeek * 100)}%` }} /><small>{day.label}</small></div>)}</div></div>
-            <div className="best-time"><span className="eyebrow">Найсильніша година</span><strong>{String(productiveHour).padStart(2, "0")}:00</strong><p>У цей час ти найдовше залишаєшся у фокусі.</p><div className="hour-line">{[6, 9, 12, 15, 18, 21].map((hour) => <i key={hour} className={Math.abs(hour - productiveHour) < 2 ? "hot" : ""}><span>{hour}</span></i>)}</div></div>
+            <InteractiveWeek items={weekData} max={maxWeek}/>
+            <InteractiveBestTime hours={hourData}/>
             <button className="quote-card" type="button" onClick={() => setQuote((value) => (value + 1) % quotes.length)}><span>“</span><p>{quotes[quote]}</p><small>Нова думка →</small></button>
           </div>
         </section>
