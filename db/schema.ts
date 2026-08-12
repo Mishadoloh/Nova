@@ -71,3 +71,12 @@ export const syncMeta = sqliteTable("sync_meta", {
   revision: integer("revision").notNull().default(0),
   updatedAt: integer("updated_at").notNull(),
 });
+
+export const userProfiles = sqliteTable("user_profiles", {
+  userId: text("user_id").primaryKey(),
+  displayName: text("display_name").notNull(),
+  focusArea: text("focus_area").notNull().default("work"),
+  timezone: text("timezone").notNull().default("Europe/Kyiv"),
+  createdAt: integer("created_at").notNull(),
+  updatedAt: integer("updated_at").notNull(),
+});
