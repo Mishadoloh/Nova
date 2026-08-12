@@ -7,14 +7,16 @@ export async function apiContext() {
 }
 
 export function apiError(code:string,message:string,status=400,details?:Record<string,unknown>) {
-  return Response.json({ ok:false, error:{ code, message, ...details } },{ status, headers:{"Cache-Control":"no-store"} });
+  return Response.json({ ok:false, error:{ code, message, ...details } },{ status, headers:{"Cache-Control":"no-store","X-Content-Type-Options":"nosniff"} });
 }
 
 export function apiOk<T>(data:T,status=200) {
-  return Response.json({ ok:true, data },{ status, headers:{"Cache-Control":"no-store"} });
+  return Response.json({ ok:true, data },{ status, headers:{"Cache-Control":"no-store","X-Content-Type-Options":"nosniff"} });
 }
 
-export async function jsonBody(request:Request) {
+export async function jsonBody(request:Request,maxBytes=1_000_000) {
+  const declared=Number(request.headers.get("content-length")??0);
+  if(Number.isFinite(declared)&&declared>maxBytes)return null;
   try { const value=await request.json(); return value&&typeof value==="object"?value as Record<string,unknown>:null; }
   catch { return null; }
 }

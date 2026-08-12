@@ -23,7 +23,10 @@ export const tasks = sqliteTable("tasks", {
   sortOrder: integer("sort_order").notNull().default(0),
   createdAt: integer("created_at").notNull(),
   updatedAt: integer("updated_at").notNull().default(0),
-}, (table) => [index("idx_tasks_user_project").on(table.userId, table.projectId)]);
+}, (table) => [
+  index("idx_tasks_user_project").on(table.userId, table.projectId),
+  index("idx_tasks_user_status_sort").on(table.userId, table.status, table.sortOrder),
+]);
 
 export const focusSessions = sqliteTable("focus_sessions", {
   id: text("id").primaryKey(),
@@ -31,7 +34,10 @@ export const focusSessions = sqliteTable("focus_sessions", {
   projectId: text("project_id").notNull(),
   startedAt: integer("started_at").notNull(),
   durationSeconds: integer("duration_seconds").notNull(),
-}, (table) => [index("idx_sessions_user_started").on(table.userId, table.startedAt)]);
+}, (table) => [
+  index("idx_sessions_user_started").on(table.userId, table.startedAt),
+  index("idx_sessions_user_project_started").on(table.userId, table.projectId, table.startedAt),
+]);
 
 export const userPreferences = sqliteTable("user_preferences", {
   userId: text("user_id").primaryKey(),
@@ -55,7 +61,10 @@ export const calendarEvents = sqliteTable("calendar_events", {
   completed: integer("completed", { mode: "boolean" }).notNull().default(false),
   createdAt: integer("created_at").notNull(),
   updatedAt: integer("updated_at").notNull(),
-}, (table) => [index("idx_events_user_starts").on(table.userId, table.startsAt)]);
+}, (table) => [
+  index("idx_events_user_starts").on(table.userId, table.startsAt),
+  index("idx_events_user_project_starts").on(table.userId, table.projectId, table.startsAt),
+]);
 
 export const syncMeta = sqliteTable("sync_meta", {
   userId: text("user_id").primaryKey(),
