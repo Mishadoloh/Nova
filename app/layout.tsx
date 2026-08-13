@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "./animations.css";
 import { GlobalTools } from "./components/GlobalTools";
+import { AuthGate } from "./components/AuthGate";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin", "cyrillic"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin", "cyrillic"] });
@@ -27,5 +28,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="uk"><body className={`${geistSans.variable} ${geistMono.variable}`}>{children}<GlobalTools /></body></html>;
+  return <html lang="uk"><body className={`${geistSans.variable} ${geistMono.variable}`}><AuthGate>{children}<GlobalTools /></AuthGate></body></html>;
 }

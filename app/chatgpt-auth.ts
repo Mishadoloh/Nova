@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { env } from "cloudflare:workers";
 
 export type ChatGPTUser = {
   userId: string;
@@ -20,6 +21,28 @@ const CALLBACK_PATH = "/callback";
 
 export async function getChatGPTUser(): Promise<ChatGPTUser | null> {
   const requestHeaders = await headers();
+  const authorization = requestHeaders.get("authorization");
+  if (authorization?.startsWith("Bearer ")) {
+    try {
+      const runtime = env as unknown as Record<string, string | undefined>;
+      const supabaseUrl = runtime.SUPABASE_URL ?? "https://tmpnjzuqrwzctmbycagb.supabase.co";
+      const publishableKey = runtime.SUPABASE_PUBLISHABLE_KEY ?? "sb_publishable_71xrJ-OJLglYBxSmiIfpsA_Ly2tYZaV";
+      const response = await fetch(`${supabaseUrl}/auth/v1/user`, {
+        headers: {
+          Authorization: authorization,
+          apikey: publishableKey,
+        },
+        cache: "no-store",
+      });
+      if (response.ok) {
+        const account = await response.json() as { id?: string; email?: string; user_metadata?: { display_name?: string; full_name?: string } };
+        if (account.id && account.email) {
+          const fullName = account.user_metadata?.display_name ?? account.user_metadata?.full_name ?? null;
+          return { userId: account.id, email: account.email, displayName: fullName ?? account.email, fullName };
+        }
+      }
+    } catch { /* fall back to platform identity */ }
+  }
   const userId = requestHeaders.get(USER_ID_HEADER);
   const email = requestHeaders.get(USER_EMAIL_HEADER);
   if (!userId || !email) return null;

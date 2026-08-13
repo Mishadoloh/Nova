@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { authFetch } from "../lib/supabase";
 
 export type Project = { id: string; name: string; color: string; deadline?: number | null; archived?: boolean; createdAt: number; updatedAt?: number };
 export type Task = { id: string; projectId: string; text: string; done: boolean; status?: "todo" | "doing" | "done"; deadline?: number | null; recurrence?: string | null; sortOrder?: number; createdAt: number; updatedAt?: number };
@@ -34,7 +35,7 @@ export function useNovaStore() {
   const revision = useRef(0);
 
   const fetchRemote = useCallback(async () => {
-    const response = await fetch("/api/sync", { cache: "no-store" });
+    const response = await authFetch("/api/sync", { cache: "no-store" });
     if (!response.ok) throw new Error("offline");
     const result = await response.json();
     revision.current = result.revision ?? 0;
@@ -46,9 +47,9 @@ export function useNovaStore() {
   }, []);
 
   const push = useCallback(async (snapshot: NovaData, force = false) => {
-    const response = await fetch("/api/sync", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...snapshot, baseRevision: revision.current, force }) });
+    const response = await authFetch("/api/sync", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...snapshot, baseRevision: revision.current, force }) });
     if (response.status === 409) {
-      const remoteResponse = await fetch("/api/sync", { cache: "no-store" });
+      const remoteResponse = await authFetch("/api/sync", { cache: "no-store" });
       const remote = await remoteResponse.json();
       revision.current = remote.revision ?? 0;
       const merged: NovaData = { ...snapshot, projects: mergeByUpdated(snapshot.projects,remote.projects??[]), tasks: mergeByUpdated(snapshot.tasks,remote.tasks??[]), events: mergeByUpdated(snapshot.events,remote.events??[]), sessions: mergeByUpdated(snapshot.sessions,remote.sessions??[]) };

@@ -13,7 +13,7 @@ async function render(path = "/") {
   );
 }
 
-test("server-renders the NOVA focus application", async () => {
+test("server protects the NOVA focus application", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
@@ -21,11 +21,18 @@ test("server-renders the NOVA focus application", async () => {
   const html = await response.text();
   assert.match(html, /<html lang="uk">/i);
   assert.match(html, /<title>NOVA — твій фокус-кокпіт<\/title>/i);
-  assert.match(html, /aria-label="Головна навігація"/);
-  assert.match(html, /class="focus-grid"/);
-  assert.match(html, /Focus studio/);
+  assert.match(html, /class="auth-loading"/);
+  assert.match(html, /Перевіряємо сесію/);
   assert.match(html, /manifest\.webmanifest/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
+});
+
+test("server-renders NOVA account registration", async () => {
+  const response = await render("/register");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /registration-page/);
+  assert.match(html, /NOVA/);
 });
 
 test("keeps production UI and backend capabilities wired", async () => {
