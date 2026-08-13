@@ -35,6 +35,19 @@ test("server-renders NOVA account registration", async () => {
   assert.match(html, /NOVA/);
 });
 
+test("Google OAuth registration returns safely to NOVA", async () => {
+  const [form, callback] = await Promise.all([
+    readFile(new URL("../app/register/registration-form.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/auth/callback/page.tsx", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(form, /signInWithOAuth/);
+  assert.match(form, /provider:\s*"google"/);
+  assert.match(form, /\/auth\/callback/);
+  assert.match(callback, /next\?\.startsWith\("\/"\)/);
+  assert.match(callback, /!next\.startsWith\("\/\/"\)/);
+});
+
 test("keeps production UI and backend capabilities wired", async () => {
   const [page, layout, hosting, syncRoute, schema, packageJson] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
