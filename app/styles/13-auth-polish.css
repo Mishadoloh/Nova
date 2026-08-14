@@ -1,0 +1,296 @@
+/* NOVA auth polish: depth, hierarchy and tactile interaction */
+.registration-page {
+  min-height: 100svh;
+  perspective: 1400px;
+}
+
+.registration-page::before {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+    radial-gradient(circle at 50% 0%, rgba(223, 255, 0, 0.035), transparent 48%);
+  background-size: 72px 72px, 72px 72px, 100% 100%;
+}
+
+.registration-shell {
+  isolation: isolate;
+  animation: auth-shell-enter 720ms cubic-bezier(0.2, 0.75, 0.2, 1) both;
+}
+
+.registration-shell::before {
+  position: absolute;
+  z-index: 3;
+  inset: -1px;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(128deg, rgba(236, 255, 142, 0.3), rgba(255, 255, 255, 0.055) 25%, transparent 54%, rgba(94, 239, 190, 0.16));
+  content: "";
+  pointer-events: none;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+.registration-auth-side::after {
+  position: absolute;
+  z-index: -1;
+  width: 62%;
+  height: 150%;
+  top: -24%;
+  left: -50%;
+  background: linear-gradient(90deg, transparent, rgba(223, 255, 0, 0.052), transparent);
+  content: "";
+  filter: blur(6px);
+  transform: rotate(17deg);
+  animation: auth-light-sweep 9s ease-in-out infinite;
+}
+
+.registration-brand {
+  transition: transform 180ms ease, filter 180ms ease;
+}
+
+.registration-brand:hover {
+  filter: brightness(1.12);
+  transform: translateY(-2px);
+}
+
+.registration-auth-side h1 {
+  filter: drop-shadow(0 18px 38px rgba(0, 0, 0, 0.22));
+}
+
+.registration-auth-side h1 em {
+  filter: drop-shadow(0 0 24px rgba(223, 255, 0, 0.1));
+}
+
+.registration-auth-side ul {
+  position: relative;
+  z-index: 1;
+}
+
+.registration-auth-side li {
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(12px);
+  transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+
+.registration-auth-side li:hover {
+  border-color: rgba(223, 255, 0, 0.28);
+  background: rgba(223, 255, 0, 0.045);
+  transform: translateY(-2px);
+}
+
+.registration-auth-form {
+  overflow: hidden;
+}
+
+.registration-auth-form::after {
+  position: absolute;
+  width: 210px;
+  height: 210px;
+  right: -140px;
+  bottom: -140px;
+  border: 1px solid rgba(223, 255, 0, 0.08);
+  border-radius: 50%;
+  box-shadow: 0 0 0 38px rgba(223, 255, 0, 0.012), 0 0 0 76px rgba(223, 255, 0, 0.008);
+  content: "";
+  pointer-events: none;
+}
+
+.registration-auth-form > * {
+  position: relative;
+  z-index: 1;
+}
+
+.registration-auth-form h2 {
+  text-wrap: balance;
+  text-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
+}
+
+.registration-auth-form label {
+  position: relative;
+}
+
+.registration-auth-form label > span {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  letter-spacing: 0.025em;
+}
+
+.registration-auth-form input {
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.025) inset, 0 12px 28px rgba(0, 0, 0, 0.09);
+}
+
+.registration-auth-form input:-webkit-autofill,
+.registration-auth-form input:-webkit-autofill:hover,
+.registration-auth-form input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #f7faf7;
+  box-shadow: 0 0 0 1000px #0c120e inset, 0 0 0 4px rgba(223, 255, 0, 0.07);
+  caret-color: #f7faf7;
+}
+
+.google-auth-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.google-auth-button::before,
+.registration-submit::before {
+  position: absolute;
+  width: 42%;
+  height: 240%;
+  top: -70%;
+  left: -65%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  content: "";
+  pointer-events: none;
+  transform: rotate(19deg);
+  transition: left 520ms cubic-bezier(0.2, 0.75, 0.2, 1);
+}
+
+.google-auth-button:hover::before,
+.registration-submit:hover::before {
+  left: 125%;
+}
+
+.google-auth-button svg {
+  flex: 0 0 auto;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.12));
+  transition: transform 180ms ease;
+}
+
+.google-auth-button:hover svg {
+  transform: scale(1.08) rotate(-2deg);
+}
+
+.google-auth-button i {
+  transition: transform 180ms ease;
+}
+
+.google-auth-button:hover i {
+  transform: translateX(3px);
+}
+
+.registration-submit {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.registration-submit::after {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: linear-gradient(105deg, #c9f300, #efff78 48%, #92f6cf);
+  content: "";
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.registration-submit:hover::after {
+  opacity: 1;
+}
+
+.registration-submit:disabled,
+.google-auth-button:disabled {
+  cursor: wait;
+  filter: saturate(0.55);
+  opacity: 0.68;
+}
+
+.registration-error,
+.registration-success {
+  animation: auth-message-enter 260ms ease-out both;
+}
+
+.auth-switch {
+  border-top: 1px solid rgba(166, 188, 171, 0.08);
+  margin-top: 2px;
+  padding-top: 13px;
+}
+
+@keyframes auth-shell-enter {
+  from {
+    opacity: 0;
+    transform: translateY(20px) rotateX(1.2deg) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotateX(0) scale(1);
+  }
+}
+
+@keyframes auth-light-sweep {
+  0%, 28% { left: -58%; opacity: 0; }
+  44% { opacity: 1; }
+  72%, 100% { left: 108%; opacity: 0; }
+}
+
+@keyframes auth-message-enter {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 760px) {
+  .registration-page {
+    perspective: none;
+  }
+
+  .registration-shell {
+    box-shadow: 0 26px 70px rgba(0, 0, 0, 0.5);
+  }
+
+  .registration-auth-side ul {
+    display: flex;
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+
+  .registration-auth-side ul::-webkit-scrollbar {
+    display: none;
+  }
+
+  .registration-auth-side li {
+    flex: 0 0 auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .registration-page {
+    padding: 8px;
+  }
+
+  .registration-shell {
+    border-radius: 20px;
+  }
+
+  .registration-auth-side {
+    min-height: 220px;
+  }
+
+  .registration-auth-form {
+    padding: 31px 20px 24px;
+  }
+
+  .registration-auth-form input[type="email"],
+  .registration-auth-form input[type="password"],
+  .registration-auth-form input[type="text"] {
+    height: 54px;
+    font-size: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .registration-shell,
+  .registration-auth-side::after,
+  .registration-error,
+  .registration-success {
+    animation: none;
+  }
+
+  .google-auth-button::before,
+  .registration-submit::before {
+    display: none;
+  }
+}
