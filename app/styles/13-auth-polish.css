@@ -120,6 +120,68 @@
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.025) inset, 0 12px 28px rgba(0, 0, 0, 0.09);
 }
 
+.auth-password-field input {
+  padding-right: 88px !important;
+}
+
+.auth-password-field > button {
+  position: absolute;
+  z-index: 2;
+  right: 10px;
+  bottom: 9px;
+  min-width: 66px;
+  height: 38px;
+  padding: 0 10px;
+  border: 1px solid rgba(166, 188, 171, 0.18);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.035);
+  color: #aab3ac;
+  font-size: 9px;
+  font-weight: 650;
+  transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
+}
+
+.auth-password-field > button:hover,
+.auth-password-field > button:focus-visible {
+  border-color: rgba(223, 255, 0, 0.4);
+  background: rgba(223, 255, 0, 0.07);
+  color: #dfff00;
+  outline: none;
+}
+
+.password-strength {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+  margin-top: -8px;
+  color: #737d75;
+  font-size: 8px;
+}
+
+.password-strength i {
+  height: 3px;
+  border-radius: 99px;
+  background: rgba(166, 188, 171, 0.16);
+  transition: background 180ms ease, box-shadow 180ms ease;
+}
+
+.password-strength[data-score="1"] i:first-child,
+.password-strength[data-score="2"] i:nth-child(-n+2),
+.password-strength[data-score="3"] i {
+  background: #dfff00;
+  box-shadow: 0 0 8px rgba(223, 255, 0, 0.25);
+}
+
+.password-strength[data-score="3"] {
+  color: #82e9be;
+}
+
+.password-strength[data-score="3"] i {
+  background: #67e8b5;
+  box-shadow: 0 0 8px rgba(103, 232, 181, 0.25);
+}
+
 .registration-auth-form input:-webkit-autofill,
 .registration-auth-form input:-webkit-autofill:hover,
 .registration-auth-form input:-webkit-autofill:focus {
