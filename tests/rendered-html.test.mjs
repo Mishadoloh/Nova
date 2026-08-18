@@ -46,6 +46,10 @@ test("Google OAuth registration returns safely to NOVA", async () => {
   assert.match(form, /\/auth\/callback/);
   assert.match(callback, /next\?\.startsWith\("\/"\)/);
   assert.match(callback, /!next\.startsWith\("\/\/"\)/);
+  assert.match(callback, /friendlyAuthError/);
+  assert.match(callback, /Вхід скасовано/);
+  assert.match(callback, /Сесія завершилась/);
+  assert.match(callback, /Спробувати ще раз/);
 });
 
 test("keeps production UI and backend capabilities wired", async () => {
