@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-html-link-for-pages */
 
-import { FormEvent, KeyboardEvent, useEffect, useState } from "react";
+import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
 import { authFetch, supabase } from "../lib/supabase";
 
 type Mode = "signin" | "signup" | "reset" | "password" | "profile";
@@ -19,6 +19,7 @@ export function RegistrationForm() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
+  const actionLockRef = useRef(false);
   const passwordStrength = [
     password.length >= 8,
     /[A-Za-zА-Яа-яІіЇїЄє]/.test(password),
@@ -28,6 +29,18 @@ export function RegistrationForm() {
 
   const updateCapsLock = (event: KeyboardEvent<HTMLInputElement>) => {
     setCapsLock(event.getModifierState("CapsLock"));
+  };
+
+  const beginAction = () => {
+    if (actionLockRef.current) return false;
+    actionLockRef.current = true;
+    setSaving(true);
+    return true;
+  };
+
+  const endAction = () => {
+    actionLockRef.current = false;
+    setSaving(false);
   };
 
   useEffect(() => {
@@ -53,7 +66,7 @@ export function RegistrationForm() {
 
   const submitAuth = async (event: FormEvent) => {
     event.preventDefault();
-    setSaving(true);
+    if (!beginAction()) return;
     setMessage("");
     setSuccess(false);
     if (mode === "reset") {
@@ -65,7 +78,7 @@ export function RegistrationForm() {
       );
       setMessage(error?.message ?? "Лист для відновлення пароля надіслано.");
       setSuccess(!error);
-      setSaving(false);
+      endAction();
       return;
     }
     if (mode === "signup") {
@@ -79,17 +92,17 @@ export function RegistrationForm() {
       });
       if (error) {
         setMessage(error.message);
-        setSaving(false);
+        endAction();
         return;
       }
       if (!data.session) {
         setMessage("Перевір пошту та підтвердь реєстрацію.");
         setSuccess(true);
-        setSaving(false);
+        endAction();
         return;
       }
       setMode("profile");
-      setSaving(false);
+      endAction();
       return;
     }
     const { error } = await supabase.auth.signInWithPassword({
@@ -102,7 +115,7 @@ export function RegistrationForm() {
           ? "Невірний email або пароль."
           : error.message,
       );
-      setSaving(false);
+      endAction();
       return;
     }
     const returnTo = new URLSearchParams(window.location.search).get(
@@ -112,7 +125,7 @@ export function RegistrationForm() {
   };
 
   const continueWithGoogle = async () => {
-    setSaving(true);
+    if (!beginAction()) return;
     setMessage("");
     setSuccess(false);
 
@@ -137,19 +150,19 @@ export function RegistrationForm() {
           ? "Вхід через Google ще не активований у Supabase."
           : error.message,
       );
-      setSaving(false);
+      endAction();
       return;
     }
 
     if (!data.url) {
       setMessage("Не вдалося відкрити Google. Спробуй ще раз.");
-      setSaving(false);
+      endAction();
     }
   };
 
   const submitProfile = async (event: FormEvent) => {
     event.preventDefault();
-    setSaving(true);
+    if (!beginAction()) return;
     setMessage("");
     await supabase.auth.updateUser({ data: { display_name: name } });
     const response = await authFetch("/api/profile", {
@@ -166,7 +179,7 @@ export function RegistrationForm() {
     const result = await response.json().catch(() => null);
     if (!response.ok) {
       setMessage(result?.error?.message ?? "Не вдалося зберегти профіль");
-      setSaving(false);
+      endAction();
       return;
     }
     window.location.replace("/account?registered=1");
@@ -174,17 +187,17 @@ export function RegistrationForm() {
 
   const updatePassword = async (event: FormEvent) => {
     event.preventDefault();
-    setSaving(true);
+    if (!beginAction()) return;
     setMessage("");
     const { error } = await supabase.auth.updateUser({ password });
     if (error) {
       setMessage(error.message);
-      setSaving(false);
+      endAction();
       return;
     }
     setSuccess(true);
     setMessage("Новий пароль збережено.");
-    setSaving(false);
+    endAction();
     window.setTimeout(() => window.location.replace("/"), 900);
   };
 

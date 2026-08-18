@@ -323,6 +323,27 @@
   opacity: 0.68;
 }
 
+.registration-submit:disabled::before,
+.google-auth-button:disabled::before {
+  position: relative;
+  width: 13px;
+  height: 13px;
+  inset: auto;
+  flex: 0 0 auto;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  background: none;
+  content: "";
+  opacity: 0.68;
+  transform: none;
+  animation: auth-button-spin 700ms linear infinite;
+}
+
+.registration-submit:disabled::after {
+  display: none;
+}
+
 .registration-error,
 .registration-success {
   animation: auth-message-enter 260ms ease-out both;
@@ -369,6 +390,12 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes auth-button-spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 
