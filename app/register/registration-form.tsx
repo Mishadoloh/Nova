@@ -19,6 +19,7 @@ export function RegistrationForm() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
+  const [needsConfirmation, setNeedsConfirmation] = useState(false);
   const actionLockRef = useRef(false);
   const passwordStrength = [
     password.length >= 8,
@@ -69,6 +70,7 @@ export function RegistrationForm() {
     if (!beginAction()) return;
     setMessage("");
     setSuccess(false);
+    setNeedsConfirmation(false);
     if (mode === "reset") {
       const { error } = await supabase.auth.resetPasswordForEmail(
         normalizedEmail,
@@ -110,11 +112,18 @@ export function RegistrationForm() {
       password,
     });
     if (error) {
-      setMessage(
-        error.message === "Invalid login credentials"
-          ? "Невірний email або пароль."
-          : error.message,
-      );
+      if (error.message === "Email not confirmed") {
+        setMessage(
+          "Email ще не підтверджено. Перевір пошту або надішли лист повторно.",
+        );
+        setNeedsConfirmation(true);
+      } else {
+        setMessage(
+          error.message === "Invalid login credentials"
+            ? "Невірний email або пароль."
+            : error.message,
+        );
+      }
       endAction();
       return;
     }
@@ -122,6 +131,37 @@ export function RegistrationForm() {
       "returnTo",
     );
     window.location.replace(returnTo?.startsWith("/") ? returnTo : "/");
+  };
+
+  const resendConfirmation = async () => {
+    if (!beginAction()) return;
+    setMessage("");
+    setSuccess(false);
+
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email: normalizedEmail,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    if (error) {
+      setMessage(
+        error.message.toLowerCase().includes("rate limit")
+          ? "Забагато спроб. Зачекай хвилину та спробуй знову."
+          : "Не вдалося надіслати лист. Перевір email і спробуй ще раз.",
+      );
+      endAction();
+      return;
+    }
+
+    setNeedsConfirmation(false);
+    setSuccess(true);
+    setMessage(
+      "Новий лист підтвердження надіслано. Перевір також папку «Спам».",
+    );
+    endAction();
   };
 
   const continueWithGoogle = async () => {
@@ -490,7 +530,10 @@ export function RegistrationForm() {
             <input
               type="email"
               value={email}
-              onChange={(event) => setEmail(event.target.value)}
+              onChange={(event) => {
+                setEmail(event.target.value);
+                setNeedsConfirmation(false);
+              }}
               required
               autoComplete="email"
               inputMode="email"
@@ -563,6 +606,20 @@ export function RegistrationForm() {
               {message}
             </p>
           )}
+          {needsConfirmation && (
+            <button
+              className="confirmation-resend"
+              type="button"
+              onClick={resendConfirmation}
+              disabled={saving || !normalizedEmail}
+            >
+              <span aria-hidden="true">↗</span>
+              <span>
+                <strong>Надіслати лист повторно</strong>
+                <small>Новий лист прийде на {normalizedEmail}</small>
+              </span>
+            </button>
+          )}
           <button
             className="registration-submit"
             type="submit"
@@ -592,6 +649,7 @@ export function RegistrationForm() {
                 onClick={() => {
                   setMode("signin");
                   setMessage("");
+                  setNeedsConfirmation(false);
                 }}
               >
                 ← Повернутися до входу

@@ -1,0 +1,83 @@
+.confirmation-resend {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 15px;
+  border: 1px solid rgba(223, 255, 0, 0.2);
+  border-radius: 14px;
+  background: linear-gradient(
+    110deg,
+    rgba(223, 255, 0, 0.09),
+    rgba(103, 232, 181, 0.045)
+  );
+  color: #f7faf7;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    transform 180ms ease;
+  animation: auth-message-enter 260ms ease-out both;
+}
+
+.confirmation-resend > span:first-child {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 10px;
+  background: #dfff00;
+  color: #091008;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.confirmation-resend > span:last-child {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.confirmation-resend strong {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.confirmation-resend small {
+  overflow: hidden;
+  color: rgba(220, 231, 222, 0.58);
+  font-size: 9px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.confirmation-resend:hover {
+  border-color: rgba(223, 255, 0, 0.46);
+  background: linear-gradient(
+    110deg,
+    rgba(223, 255, 0, 0.14),
+    rgba(103, 232, 181, 0.075)
+  );
+  transform: translateY(-1px);
+}
+
+.confirmation-resend:focus-visible {
+  outline: 2px solid #dfff00;
+  outline-offset: 3px;
+}
+
+.confirmation-resend:disabled {
+  cursor: wait;
+  opacity: 0.62;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confirmation-resend {
+    animation: none;
+    transition: none;
+  }
+}
