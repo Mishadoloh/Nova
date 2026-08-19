@@ -99,3 +99,43 @@ test("keeps production UI and backend capabilities wired", async () => {
     ),
   );
 });
+
+test("polyglot Docker services stay connected to the NOVA interface", async () => {
+  const [compose, polyglot, home, analytics, gateway, python, cpp] =
+    await Promise.all([
+      readFile(new URL("../docker-compose.yml", import.meta.url), "utf8"),
+      readFile(new URL("../app/lib/polyglot.ts", import.meta.url), "utf8"),
+      readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+      readFile(new URL("../app/analytics/page.tsx", import.meta.url), "utf8"),
+      readFile(
+        new URL("../services/gateway/internal/api/server.go", import.meta.url),
+        "utf8",
+      ),
+      readFile(
+        new URL(
+          "../services/analytics/nova_analytics/engine.py",
+          import.meta.url,
+        ),
+        "utf8",
+      ),
+      readFile(
+        new URL(
+          "../services/timer-engine/src/timer_engine.cpp",
+          import.meta.url,
+        ),
+        "utf8",
+      ),
+    ]);
+
+  assert.match(compose, /gateway:/);
+  assert.match(compose, /analytics:/);
+  assert.match(compose, /timer-engine:/);
+  assert.match(polyglot, /NOVA_SERVICES_TOKEN/);
+  assert.match(polyglot, /mode: "embedded"/);
+  assert.match(home, /\/api\/engine\/timer/);
+  assert.match(home, /<EngineStatus\s*\/>/);
+  assert.match(analytics, /<EngineInsight/);
+  assert.match(gateway, /ConstantTimeCompare/);
+  assert.match(python, /def summarize/);
+  assert.match(cpp, /TimerEngine::build/);
+});

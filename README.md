@@ -1,100 +1,75 @@
-# vinext-starter
+# NOVA
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+NOVA is a focus workspace with projects, tasks, Pomodoro sessions, ambient audio, real analytics, achievements, offline caching, and account synchronization.
 
-## Prerequisites
+The product uses a Vinext/React application and an optional Docker Compose intelligence stack:
 
-- Node.js `>=22.13.0`
+- **Go API gateway** — authentication, request limits, timeouts, health aggregation, and routing.
+- **Python analytics** — real-session summaries, focus score, best working hour, project distribution, and recommendations.
+- **C++ timer engine** — validated Pomodoro cycles and deterministic phase plans.
 
-## Quick Start
+The browser always talks to same-origin `/api/engine/*` routes. Internal credentials never reach client code. If the container stack is unavailable, the site switches to an embedded compatible engine so an active timer is never interrupted.
+
+## Requirements
+
+- Node.js 22.13 or newer
+- Docker Desktop with Docker Compose
+- Go 1.24+ only when running gateway tests outside Docker
+
+## Web application
 
 ```bash
 npm install
 npm run dev
-npm run build
+npm test
 ```
 
-This starter does not use `wrangler.jsonc`.
+## Polyglot services
 
-## Included Shape
+Create a local environment file from `.env.example`, replace the development secret, and start the stack:
 
-- edit site code under `app/`
-- `.openai/hosting.json` declares optional Sites D1 and R2 bindings
-- `vite.config.ts` simulates declared bindings for local development
-- `db/schema.ts` starts intentionally empty
-- `examples/d1/` contains an optional D1 example surface
-- `drizzle.config.ts` supports local migration generation when needed
-
-## Workspace Auth Headers
-
-Signed-in visitors receive both `oai-authenticated-user-id` and `oai-authenticated-user-email`. Private Sites require every visitor to sign in; public Sites may also have anonymous visitors, for whom neither header is present.
-
-The user ID is stable for the same user on the same Site and different across Sites. Email and name are intended for display or contact purposes.
-
-SIWC-authenticated workspace sites may also receive
-`oai-authenticated-user-full-name` when the user's SIWC profile has a non-empty
-`name` claim. The full-name value is percent-encoded UTF-8 and is accompanied by
-`oai-authenticated-user-full-name-encoding: percent-encoded-utf-8`.
-
-Treat the full name as optional and fall back to email when it is absent:
-
-```tsx
-import { headers } from "next/headers";
-
-export default async function Home() {
-  const requestHeaders = await headers();
-  const userId = requestHeaders.get("oai-authenticated-user-id");
-  const email = requestHeaders.get("oai-authenticated-user-email");
-  const encodedFullName = requestHeaders.get("oai-authenticated-user-full-name");
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get("oai-authenticated-user-full-name-encoding") ===
-      "percent-encoded-utf-8"
-      ? decodeURIComponent(encodedFullName)
-      : null;
-
-  const displayName = fullName ?? email;
-  // ...
-}
+```bash
+docker compose up --build
 ```
 
-## Optional Dispatch-Owned ChatGPT Sign-In
+The gateway listens on `http://localhost:8080` by default. If that port is occupied, set `NOVA_GATEWAY_PORT=18080` in `.env`. Python and C++ remain isolated on the private Compose network.
 
-Import the ready-to-use helpers from `app/chatgpt-auth.ts` when the site needs
-optional or required ChatGPT sign-in:
+Useful commands:
 
-- Use `getChatGPTUser()` for optional signed-in UI.
-- Use `requireChatGPTUser(returnTo)` for server-rendered pages that should send
-  anonymous visitors through Sign in with ChatGPT.
-- Use `chatGPTSignInPath(returnTo)` and `chatGPTSignOutPath(returnTo)` for
-  browser links or actions.
-- Pass a same-origin relative `returnTo` path for the destination after sign-in
-  or sign-out. The helper validates and safely encodes it.
-- Mark protected pages with `export const dynamic = "force-dynamic"` because
-  they depend on per-request identity headers.
+```bash
+npm run services:build
+npm run services:up
+npm run services:down
+```
 
-Dispatch owns `/signin-with-chatgpt`, `/signout-with-chatgpt`, `/callback`, the
-OAuth cookies, and identity header injection. Do not implement app routes for
-those reserved paths. Routes that do not import and call the helper remain
-anonymous-compatible.
+Each service runs its own tests during image construction. Compose also waits for all health checks before declaring the stack ready.
 
-SIWC establishes identity only; it does not prove workspace membership. Use the
-Sites hosting platform's access policy controls for workspace-wide restrictions,
-or enforce explicit server-side membership or allowlist checks.
+## Connect the site to Docker
 
-Use SIWC for account pages, user-specific dashboards, saved records, and write
-actions tied to the current ChatGPT user. Leave public content anonymous.
+Set these server-side values for the NOVA web runtime:
 
-## Useful Commands
+```dotenv
+NOVA_SERVICES_URL=http://127.0.0.1:8080
+NOVA_SERVICES_TOKEN=the-same-value-as-NOVA_INTERNAL_TOKEN
+```
 
-- `npm run dev`: start local development
-- `npm run build`: verify the vinext build output
-- `npm test`: build the starter and verify its rendered loading skeleton
-- `npm run db:generate`: generate Drizzle migrations after schema changes
+Do not prefix these keys with `NEXT_PUBLIC_`. For a hosted website, deploy the Compose stack behind HTTPS and set `NOVA_SERVICES_URL` to that private gateway address.
 
-## Learn More
+Detailed request flow, production notes, endpoints, and security controls are documented in [docs/polyglot-architecture.md](docs/polyglot-architecture.md).
 
-- [vinext Documentation](https://github.com/cloudflare/vinext)
-- [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+## Data and authentication
+
+- Supabase provides public email/password and Google account authentication.
+- Server APIs keep authorization decisions outside browser state.
+- Cloudflare D1 stores synchronized projects, tasks, sessions, and preferences.
+- Browser storage is used only as an offline cache and queued-change buffer.
+
+## Production checks
+
+```bash
+npm test
+docker compose build
+docker compose up -d --wait
+```
+
+After the checks, call the gateway health endpoint and then stop the local stack with `docker compose down`.

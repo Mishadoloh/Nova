@@ -1,0 +1,69 @@
+name: nova-focus
+
+services:
+  gateway:
+    build:
+      context: ./services/gateway
+    environment:
+      NOVA_HTTP_ADDR: :8080
+      NOVA_ANALYTICS_URL: http://analytics:8090
+      NOVA_TIMER_URL: http://timer-engine:8070
+      NOVA_INTERNAL_TOKEN: ${NOVA_INTERNAL_TOKEN:-nova-local-development-key}
+      NOVA_REQUEST_TIMEOUT: 5s
+    ports:
+      - "${NOVA_GATEWAY_PORT:-8080}:8080"
+    depends_on:
+      analytics:
+        condition: service_healthy
+      timer-engine:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "/gateway", "healthcheck"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    networks: [nova-internal]
+    restart: unless-stopped
+
+  analytics:
+    build:
+      context: ./services/analytics
+    environment:
+      NOVA_INTERNAL_TOKEN: ${NOVA_INTERNAL_TOKEN:-nova-local-development-key}
+      NOVA_ANALYTICS_PORT: "8090"
+    expose: ["8090"]
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8090/health', timeout=2)",
+        ]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    networks: [nova-internal]
+    restart: unless-stopped
+
+  timer-engine:
+    build:
+      context: ./services/timer-engine
+    environment:
+      NOVA_INTERNAL_TOKEN: ${NOVA_INTERNAL_TOKEN:-nova-local-development-key}
+      NOVA_TIMER_PORT: "8070"
+    expose: ["8070"]
+    healthcheck:
+      test: ["CMD", "/timer-engine", "healthcheck"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    networks: [nova-internal]
+    restart: unless-stopped
+
+networks:
+  nova-internal:
+    driver: bridge
