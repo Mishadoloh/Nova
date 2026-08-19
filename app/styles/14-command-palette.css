@@ -1,0 +1,100 @@
+/* Command palette: keyboard-first navigation and clearer selection */
+.command-panel {
+  box-shadow:
+    0 40px 130px rgba(0, 0, 0, 0.72),
+    0 0 0 1px rgba(255, 255, 255, 0.025) inset;
+}
+
+.command-search input[role="combobox"] {
+  caret-color: var(--accent);
+}
+
+.command-results button.active,
+.command-results button[aria-selected="true"] {
+  border-color: color-mix(in srgb, var(--accent) 22%, transparent);
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--accent) 8%, transparent),
+      transparent 72%
+    ),
+    rgba(255, 255, 255, 0.045);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.16);
+  transform: translateX(2px);
+}
+
+.command-results button.active > i,
+.command-results button[aria-selected="true"] > i {
+  color: var(--accent);
+}
+
+.command-results button.active > b,
+.command-results button[aria-selected="true"] > b {
+  transform: translateX(2px);
+}
+
+.command-results button > b {
+  transition: transform 160ms ease;
+}
+
+.command-empty {
+  display: flex;
+  min-height: 116px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #858c86;
+  text-align: left;
+}
+
+.command-empty > i {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--accent);
+  font-size: 18px;
+  font-style: normal;
+}
+
+.command-empty > span {
+  font-size: 10px;
+}
+
+.command-empty small {
+  display: block;
+  margin-top: 4px;
+  color: #5d625d;
+  font-size: 8px;
+}
+
+.command-panel footer span:first-child,
+.command-panel footer span:nth-child(2) {
+  color: #8d958f;
+}
+
+@media (max-width: 660px) {
+  .command-backdrop {
+    padding: 7vh 10px 14px;
+  }
+
+  .command-panel footer {
+    gap: 10px;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+  }
+
+  .command-panel footer::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .command-results button,
+  .command-results button > b {
+    transition: none;
+  }
+}
