@@ -43,6 +43,36 @@ export async function bumpRevision(db:typeof env.DB,userId:string) {
   return { revision:Number(row?.revision??1), updatedAt:timestamp };
 }
 
+export async function recordActivity(
+  db: typeof env.DB,
+  userId: string,
+  activity: {
+    action: string;
+    entityType: string;
+    entityId?: string | null;
+    label: string;
+    metadata?: Record<string, unknown>;
+  },
+) {
+  const action = cleanText(activity.action, 40);
+  const entityType = cleanText(activity.entityType, 40);
+  const label = cleanText(activity.label, 160);
+  if (!action || !entityType || !label) return;
+  const metadata = activity.metadata
+    ? JSON.stringify(activity.metadata).slice(0, 1_500)
+    : null;
+  try {
+    await db.batch([
+      db.prepare("INSERT INTO activity_log (id,user_id,action,entity_type,entity_id,label,metadata,created_at) VALUES (?,?,?,?,?,?,?,?)")
+        .bind(crypto.randomUUID(), userId, action, entityType, activity.entityId ?? null, label, metadata, Date.now()),
+      db.prepare("DELETE FROM activity_log WHERE user_id=? AND id NOT IN (SELECT id FROM activity_log WHERE user_id=? ORDER BY created_at DESC LIMIT 120)")
+        .bind(userId, userId),
+    ]);
+  } catch {
+    // Activity history is useful but must never block the primary user action.
+  }
+}
+
 export function unauthorized() {
   return apiError("AUTH_REQUIRED","Потрібна авторизація через ChatGPT",401);
 }

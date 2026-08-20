@@ -1,5 +1,6 @@
 import { env } from "cloudflare:workers";
 import { getChatGPTUser } from "../../chatgpt-auth";
+import { recordActivity } from "../backend";
 
 type Row = Record<string, unknown>;
 type SyncPayload = {
@@ -128,5 +129,11 @@ export async function POST(request: Request) {
   statements.push(db.prepare("INSERT INTO user_preferences (user_id,focus_minutes,break_minutes,auto_pomodoro,daily_goal_minutes,active_project_id,timer_mode,updated_at) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT(user_id) DO UPDATE SET focus_minutes=excluded.focus_minutes,break_minutes=excluded.break_minutes,auto_pomodoro=excluded.auto_pomodoro,daily_goal_minutes=excluded.daily_goal_minutes,active_project_id=excluded.active_project_id,timer_mode=excluded.timer_mode,updated_at=excluded.updated_at").bind(user.userId, finite(preferences.focusMinutes, 1, 120) ?? 25, finite(preferences.breakMinutes, 1, 60) ?? 5, preferences.autoPomodoro ? 1 : 0, finite(preferences.dailyGoalMinutes ?? 120, 15, 720) ?? 120, id(preferences.activeProjectId) && projects.some((item) => item.id === preferences.activeProjectId) ? preferences.activeProjectId : null, preferences.timerMode === "break" ? "break" : "focus", timestamp));
   statements.push(db.prepare("INSERT INTO sync_meta (user_id,revision,updated_at) VALUES (?,?,?) ON CONFLICT(user_id) DO UPDATE SET revision=excluded.revision,updated_at=excluded.updated_at").bind(user.userId, nextRevision, timestamp));
   await db.batch(statements);
+  await recordActivity(db, user.userId, {
+    action: "synced",
+    entityType: "workspace",
+    label: "Синхронізовано робочий простір",
+    metadata: { projects: projects.length, tasks: tasks.length, sessions: sessions.length, events: events.length, revision: nextRevision },
+  });
   return Response.json({ ok: true, syncedAt: timestamp, revision: nextRevision, counts: { projects: projects.length, tasks: tasks.length, sessions: sessions.length, events: events.length } }, { headers: { "Cache-Control": "no-store", "X-Nova-Revision": String(nextRevision), "X-Content-Type-Options": "nosniff" } });
 }

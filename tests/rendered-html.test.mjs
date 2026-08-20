@@ -139,3 +139,31 @@ test("polyglot Docker services stay connected to the NOVA interface", async () =
   assert.match(python, /def summarize/);
   assert.match(cpp, /TimerEngine::build/);
 });
+
+test("backend activity is persisted, protected, and visible in the profile", async () => {
+  const [route, backend, schema, migration, account, component] =
+    await Promise.all([
+      readFile(new URL("../app/api/activity/route.ts", import.meta.url), "utf8"),
+      readFile(new URL("../app/api/backend.ts", import.meta.url), "utf8"),
+      readFile(new URL("../db/schema.ts", import.meta.url), "utf8"),
+      readFile(
+        new URL("../drizzle/0006_cuddly_doctor_faustus.sql", import.meta.url),
+        "utf8",
+      ),
+      readFile(new URL("../app/account/page.tsx", import.meta.url), "utf8"),
+      readFile(
+        new URL("../app/components/BackendActivity.tsx", import.meta.url),
+        "utf8",
+      ),
+    ]);
+
+  assert.match(route, /if \(!context\) return unauthorized\(\)/);
+  assert.match(route, /ORDER BY created_at DESC LIMIT/);
+  assert.match(backend, /recordActivity/);
+  assert.match(backend, /LIMIT 120/);
+  assert.match(schema, /activityLog/);
+  assert.match(migration, /CREATE TABLE `activity_log`/);
+  assert.match(migration, /idx_activity_user_created/);
+  assert.match(account, /<BackendActivity\s*\/>/);
+  assert.match(component, /\/api\/activity\?limit=8/);
+});

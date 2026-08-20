@@ -80,3 +80,16 @@ export const userProfiles = sqliteTable("user_profiles", {
   createdAt: integer("created_at").notNull(),
   updatedAt: integer("updated_at").notNull(),
 });
+
+export const activityLog = sqliteTable("activity_log", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  action: text("action").notNull(),
+  entityType: text("entity_type").notNull(),
+  entityId: text("entity_id"),
+  label: text("label").notNull(),
+  metadata: text("metadata"),
+  createdAt: integer("created_at").notNull(),
+}, (table) => [
+  index("idx_activity_user_created").on(table.userId, table.createdAt),
+]);

@@ -43,6 +43,13 @@
       "when": 1786561369068,
       "tag": "0005_wise_pete_wisdom",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1787252298898,
+      "tag": "0006_cuddly_doctor_faustus",
+      "breakpoints": true
     }
   ]
 }
