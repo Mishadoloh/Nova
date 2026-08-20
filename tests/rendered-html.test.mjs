@@ -167,3 +167,26 @@ test("backend activity is persisted, protected, and visible in the profile", asy
   assert.match(account, /<BackendActivity\s*\/>/);
   assert.match(component, /\/api\/activity\?limit=8/);
 });
+
+test("account backups can be exported, validated, merged, and restored", async () => {
+  const [account, component, styles] = await Promise.all([
+    readFile(new URL("../app/account/page.tsx", import.meta.url), "utf8"),
+    readFile(
+      new URL("../app/components/BackupManager.tsx", import.meta.url),
+      "utf8",
+    ),
+    readFile(
+      new URL("../app/styles/19-backup-manager.css", import.meta.url),
+      "utf8",
+    ),
+  ]);
+
+  assert.match(account, /<BackupManager/);
+  assert.match(component, /format: "nova-backup"/);
+  assert.match(component, /parseBackup/);
+  assert.match(component, /uniqueIds/);
+  assert.match(component, /mergeRecords/);
+  assert.match(component, /mode === "replace"/);
+  assert.match(component, /await save\(next\)/);
+  assert.match(styles, /backup-preview/);
+});
