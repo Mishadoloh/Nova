@@ -1,0 +1,553 @@
+/* NOVA · mobile experience — final responsive overrides */
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  overflow-x: clip;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  touch-action: manipulation;
+}
+
+@media (max-width: 760px) {
+  :root {
+    --mobile-gutter: clamp(14px, 4vw, 20px);
+    --mobile-nav-height: 72px;
+  }
+
+  body {
+    min-width: 320px;
+    overscroll-behavior-x: none;
+  }
+
+  .app-shell,
+  .inner-app {
+    min-height: 100dvh;
+  }
+
+  .workspace,
+  .inner-workspace {
+    min-width: 0;
+    padding:
+      max(18px, env(safe-area-inset-top))
+      var(--mobile-gutter)
+      calc(var(--mobile-nav-height) + 34px + env(safe-area-inset-bottom));
+  }
+
+  .sidebar,
+  .inner-app .sidebar {
+    inset:
+      auto
+      max(8px, env(safe-area-inset-right))
+      max(8px, env(safe-area-inset-bottom))
+      max(8px, env(safe-area-inset-left));
+    width: auto;
+    max-width: none;
+    height: var(--mobile-nav-height);
+    padding: 8px;
+    border-radius: 21px;
+    isolation: isolate;
+  }
+
+  .sidebar nav,
+  .inner-app .sidebar nav {
+    min-width: 0;
+    gap: 4px;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: x proximity;
+  }
+
+  .nav-item,
+  .inner-app .nav-item {
+    min-width: 49px;
+    min-height: 54px;
+    scroll-snap-align: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .nav-item i,
+  .inner-app .nav-item i {
+    font-size: 10px;
+  }
+
+  .topbar {
+    min-width: 0;
+    min-height: 54px;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .top-actions {
+    min-width: 0;
+    margin-left: auto;
+  }
+
+  .top-actions > * {
+    flex: 0 0 auto;
+  }
+
+  .hero-copy {
+    margin: clamp(38px, 11vh, 68px) 0 30px;
+  }
+
+  .hero-copy h1,
+  .page-title h1 {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    font-size: clamp(42px, 13.5vw, 62px);
+    line-height: 0.92;
+  }
+
+  .hero-copy > p,
+  .page-title p {
+    max-width: 100%;
+    font-size: 11px;
+    line-height: 1.6;
+  }
+
+  .page-title {
+    min-height: 248px;
+    padding: 54px 0 28px;
+  }
+
+  .page-title > div,
+  .page-title > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .breadcrumb {
+    top: max(16px, env(safe-area-inset-top));
+    max-width: calc(100vw - var(--mobile-gutter) * 2);
+  }
+
+  .focus-grid,
+  .side-stack,
+  .project-overview,
+  .board-columns,
+  .analytics-main,
+  .analytics-lower,
+  .analytics-grid,
+  .calendar-layout,
+  .settings-page-grid,
+  .account-grid,
+  .badge-grid {
+    min-width: 0;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .timer-card,
+  .task-card,
+  .sound-card,
+  .mixer-card,
+  .project-tile,
+  .project-detail,
+  .big-chart,
+  .focus-score,
+  .category-panel,
+  .heat-panel,
+  .month-panel,
+  .day-planner,
+  .account-card,
+  .settings-card {
+    min-width: 0;
+    max-width: 100%;
+    border-radius: 21px;
+  }
+
+  .timer-card {
+    min-height: min(520px, calc(100dvh - 132px));
+    padding: 20px 14px;
+  }
+
+  .orbit {
+    width: min(72vw, 270px);
+    max-width: 100%;
+  }
+
+  .timer-core strong {
+    font-size: clamp(50px, 16vw, 64px);
+  }
+
+  .mode-tabs {
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .mode-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mode-tabs button {
+    flex: 1 0 auto;
+    min-height: 42px;
+  }
+
+  .timer-actions button,
+  .start-button,
+  .zen-button,
+  .registration-submit,
+  .google-auth-button {
+    min-height: 50px;
+  }
+
+  .project-toolbar,
+  .calendar-actions,
+  .analytics-filters,
+  .settings-save,
+  .account-actions {
+    width: 100%;
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .project-controls,
+  .calendar-actions,
+  .analytics-filters {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .project-controls > *,
+  .calendar-actions > *,
+  .analytics-filters > * {
+    min-width: 0;
+    min-height: 44px;
+  }
+
+  .metric-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .metric-row > div {
+    min-width: 0;
+  }
+
+  .chart-grid,
+  .fourteen-chart,
+  .heat-grid {
+    min-width: 0;
+  }
+
+  .month-panel,
+  .day-planner,
+  .big-chart,
+  .category-panel,
+  .heat-panel {
+    padding: 18px 12px;
+  }
+
+  .month-grid {
+    gap: 3px;
+  }
+
+  .month-grid button {
+    min-width: 0;
+    min-height: 42px;
+    padding: 4px 2px;
+  }
+
+  .timeline-items article {
+    min-width: 0;
+    grid-template-columns: 7px 38px minmax(0, 1fr) auto;
+  }
+
+  .timeline-items article strong,
+  .board-task,
+  .project-tile h2,
+  .account-card,
+  .settings-card {
+    overflow-wrap: anywhere;
+  }
+
+  .mixer-card .mixer-tracks > div {
+    grid-template-columns: minmax(94px, 0.8fr) minmax(68px, 1fr) 28px;
+    gap: 5px;
+  }
+
+  .mixer-presets {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .engine-status-wrap {
+    max-width: 100%;
+  }
+
+  .engine-status {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .engine-status-panel {
+    position: fixed;
+    z-index: 100;
+    top: auto;
+    right: var(--mobile-gutter);
+    bottom: calc(var(--mobile-nav-height) + 22px + env(safe-area-inset-bottom));
+    left: var(--mobile-gutter);
+    width: auto;
+    max-height: min(70dvh, 520px);
+    overflow-y: auto;
+  }
+
+  .engine-insight {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    padding: 20px;
+  }
+
+  .engine-insight dl {
+    grid-column: auto;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .command-trigger {
+    right: max(14px, env(safe-area-inset-right));
+    bottom: calc(var(--mobile-nav-height) + 22px + env(safe-area-inset-bottom));
+  }
+
+  .command-palette {
+    inset: auto 10px calc(var(--mobile-nav-height) + 18px + env(safe-area-inset-bottom));
+    width: auto;
+    max-height: min(72dvh, 620px);
+    border-radius: 20px;
+  }
+
+  /* Sign-in and registration become a focused single-column mobile flow. */
+  .registration-page {
+    display: block;
+    min-height: 100dvh;
+    padding:
+      max(8px, env(safe-area-inset-top))
+      max(8px, env(safe-area-inset-right))
+      max(8px, env(safe-area-inset-bottom))
+      max(8px, env(safe-area-inset-left));
+    overflow-x: hidden;
+  }
+
+  .registration-shell,
+  .registration-auth {
+    width: 100%;
+    min-height: calc(100dvh - max(16px, env(safe-area-inset-top) + env(safe-area-inset-bottom)));
+    border-radius: 24px;
+  }
+
+  .registration-auth {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+  }
+
+  .registration-auth-side {
+    min-height: 164px;
+    padding: 24px 22px 20px;
+  }
+
+  .registration-auth-side .registration-brand {
+    margin: 0 0 26px;
+  }
+
+  .registration-auth-side h1 {
+    max-width: 430px;
+    margin: 0;
+    font-size: clamp(31px, 9.5vw, 43px);
+    line-height: 0.96;
+  }
+
+  .registration-auth-side > p,
+  .registration-auth-side > .eyebrow,
+  .registration-auth-side ul {
+    display: none;
+  }
+
+  .registration-auth-form {
+    min-width: 0;
+    gap: 15px;
+    padding: 28px 22px max(28px, env(safe-area-inset-bottom));
+  }
+
+  .registration-auth-form h2 {
+    font-size: clamp(29px, 9vw, 38px);
+  }
+
+  .registration-auth-form input[type="email"],
+  .registration-auth-form input[type="password"],
+  .registration-auth-form input[type="text"] {
+    width: 100%;
+    height: 56px;
+    font-size: 16px;
+  }
+
+  .auth-password-field > button {
+    min-width: 78px;
+    min-height: 42px;
+  }
+
+  .auth-switch {
+    gap: 9px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .auth-result-page {
+    min-height: 100dvh;
+    padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+  }
+
+  .auth-result-card {
+    min-height: calc(100dvh - 16px);
+    padding: 74px 24px 56px;
+  }
+}
+
+@media (max-width: 430px) {
+  :root {
+    --mobile-gutter: 12px;
+  }
+
+  .workspace,
+  .inner-workspace {
+    padding-inline: 12px;
+  }
+
+  .top-actions .status,
+  .top-actions .engine-status-wrap {
+    display: none;
+  }
+
+  .hero-copy h1,
+  .page-title h1 {
+    font-size: clamp(39px, 13vw, 54px);
+  }
+
+  .timer-card {
+    min-height: 485px;
+  }
+
+  .timer-actions {
+    gap: 8px;
+  }
+
+  .timer-actions button {
+    flex: 1 1 auto;
+  }
+
+  .metric-row,
+  .project-controls,
+  .calendar-actions,
+  .analytics-filters {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .achievement-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .registration-page {
+    padding: 0;
+  }
+
+  .registration-shell,
+  .registration-auth {
+    min-height: 100dvh;
+    border-width: 0;
+    border-radius: 0;
+  }
+
+  .registration-auth-side {
+    min-height: 142px;
+    padding: max(22px, env(safe-area-inset-top)) 18px 18px;
+  }
+
+  .registration-auth-side .registration-brand {
+    margin-bottom: 20px;
+  }
+
+  .registration-auth-side h1 {
+    font-size: clamp(28px, 9vw, 37px);
+  }
+
+  .registration-auth-form {
+    padding: 25px 18px max(26px, env(safe-area-inset-bottom));
+  }
+
+  .google-auth-button,
+  .registration-submit {
+    width: 100%;
+  }
+
+  .engine-insight dl {
+    gap: 16px;
+  }
+
+  .engine-insight-score {
+    width: 82px;
+    height: 82px;
+  }
+}
+
+@media (max-width: 360px) {
+  .nav-item,
+  .inner-app .nav-item {
+    flex-basis: 46px;
+    min-width: 46px;
+  }
+
+  .registration-auth-side h1 {
+    font-size: 28px;
+  }
+
+  .mixer-card .mixer-tracks > div {
+    grid-template-columns: minmax(84px, 0.75fr) minmax(60px, 1fr) 25px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 520px) and (max-width: 960px) {
+  .registration-auth {
+    grid-template-columns: minmax(220px, 0.72fr) minmax(0, 1.28fr);
+  }
+
+  .registration-auth-side {
+    min-height: calc(100dvh - 16px);
+  }
+
+  .registration-auth-form {
+    max-height: calc(100dvh - 16px);
+    overflow-y: auto;
+  }
+
+  .sidebar,
+  .inner-app .sidebar {
+    --mobile-nav-height: 60px;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  input,
+  select,
+  textarea,
+  button,
+  .nav-item {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  input[type="range"] {
+    min-height: 36px;
+  }
+
+  .project-tabs button,
+  .sound-options button,
+  .sleep-timer button {
+    min-height: 42px;
+  }
+}

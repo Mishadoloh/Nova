@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "./animations.css";
@@ -25,6 +25,14 @@ export const metadata: Metadata = {
     description: "Твій ритм. Твої перемоги.",
     images: ["/og-v2.png"],
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: "cover",
+  themeColor: "#090c0a",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
