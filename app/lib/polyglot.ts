@@ -39,17 +39,23 @@ async function callService<T>(
   headers.set("Authorization", `Bearer ${config.token}`);
   if (init.body) headers.set("Content-Type", "application/json");
 
-  try {
-    const response = await fetch(`${config.baseURL}${path}`, {
-      ...init,
-      headers,
-      signal: AbortSignal.timeout(4_000),
-    });
-    if (!response.ok) return null;
-    return (await response.json()) as T;
-  } catch {
-    return null;
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      const response = await fetch(`${config.baseURL}${path}`, {
+        ...init,
+        headers,
+        signal: AbortSignal.timeout(4_000),
+      });
+      if (response.ok) return (await response.json()) as T;
+      if (![502, 503, 504].includes(response.status)) return null;
+    } catch {
+      // One retry absorbs container wake-ups and brief network gaps.
+    }
+    if (attempt === 0) {
+      await new Promise((resolve) => setTimeout(resolve, 140));
+    }
   }
+  return null;
 }
 
 export async function engineHealth() {
