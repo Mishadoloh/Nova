@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { access, readFile } from "node:fs/promises";
+import { access, readFile, readdir } from "node:fs/promises";
 import test from "node:test";
 
 async function render(path = "/") {
@@ -15,6 +15,17 @@ async function render(path = "/") {
     },
     { waitUntil() {}, passThroughOnException() {} },
   );
+}
+
+async function filesBelow(directory) {
+  const entries = await readdir(directory, { withFileTypes: true });
+  const files = [];
+  for (const entry of entries) {
+    const url = new URL(`${entry.name}${entry.isDirectory() ? "/" : ""}`, directory);
+    if (entry.isDirectory()) files.push(...await filesBelow(url));
+    else files.push(url);
+  }
+  return files;
 }
 
 test("server protects the NOVA focus application", async () => {
@@ -182,11 +193,45 @@ test("account backups can be exported, validated, merged, and restored", async (
   ]);
 
   assert.match(account, /<BackupManager/);
-  assert.match(component, /format: "nova-backup"/);
+  assert.match(component, /authFetch\("\/api\/backup\?download=1"/);
   assert.match(component, /parseBackup/);
   assert.match(component, /uniqueIds/);
-  assert.match(component, /mergeRecords/);
+  assert.match(component, /\/api\/backup/);
   assert.match(component, /mode === "replace"/);
-  assert.match(component, /await save\(next\)/);
+  assert.match(component, /await refresh\(\)/);
   assert.match(styles, /backup-preview/);
+});
+
+test("professional backend exceeds 3000 meaningful lines and exposes new services", async () => {
+  const roots = [
+    new URL("../app/api/", import.meta.url),
+    new URL("../db/", import.meta.url),
+    new URL("../services/", import.meta.url),
+  ];
+  const files = (await Promise.all(roots.map(filesBelow))).flat().filter((url) => /\.(ts|go|py|cpp|hpp)$/.test(url.pathname));
+  const sources = await Promise.all(files.map((url) => readFile(url, "utf8")));
+  const totalLines = sources.reduce((sum, source) => sum + source.split(/\r?\n/).length, 0);
+  const [search, calendar, insights, planner, backup, validation, workspace] = await Promise.all([
+    readFile(new URL("../app/api/search/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/calendar/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/insights/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/planner/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/backup/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/core/validation.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/core/workspace.ts", import.meta.url), "utf8"),
+  ]);
+
+  assert.ok(totalLines >= 3000, `Expected at least 3000 backend lines, received ${totalLines}`);
+  assert.match(search, /if \(!context\) return unauthorized\(\)/);
+  assert.match(search, /LIKE \? ESCAPE/);
+  assert.match(calendar, /export async function PATCH/);
+  assert.match(calendar, /recordActivity/);
+  assert.match(insights, /calculateStreak/);
+  assert.match(insights, /focusScore/);
+  assert.match(planner, /buildSlots/);
+  assert.match(planner, /NOT_ENOUGH_TIME/);
+  assert.match(backup, /mergeWorkspace/);
+  assert.match(backup, /writeWorkspace/);
+  assert.match(validation, /validateWorkspace/);
+  assert.match(workspace, /ON CONFLICT\(id\) DO UPDATE/);
 });

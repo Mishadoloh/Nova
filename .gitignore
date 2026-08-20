@@ -46,3 +46,4 @@ nova-site.tar.gz
 /.wrangler/
 /outputs/
 /work/
+*.tsbuildinfo
