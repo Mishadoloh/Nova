@@ -235,3 +235,18 @@ test("professional backend exceeds 3000 meaningful lines and exposes new service
   assert.match(validation, /validateWorkspace/);
   assert.match(workspace, /ON CONFLICT\(id\) DO UPDATE/);
 });
+
+test("command palette searches synchronized projects, tasks, and calendar events", async () => {
+  const [tools, styles] = await Promise.all([
+    readFile(new URL("../app/components/GlobalTools.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/styles/14-command-palette.css", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(tools, /\/api\/search\?q=/);
+  assert.match(tools, /encodeURIComponent\(needle\)/);
+  assert.match(tools, /AbortController/);
+  assert.match(tools, /Пошук у хмарних даних/);
+  assert.match(tools, /event: "Подія календаря"/);
+  assert.match(styles, /command-status/);
+  assert.match(styles, /result-color/);
+});

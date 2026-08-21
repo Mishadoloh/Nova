@@ -4,6 +4,29 @@ import { useEffect, useMemo, useState } from "react";
 import { navItems } from "./AppFrame";
 import { useNovaStore } from "./nova-store";
 
+type CommandResult = {
+  id?: string;
+  label: string;
+  href: string;
+  meta: string;
+  color?: string | null;
+};
+
+type ServerSearchResult = {
+  id: string;
+  type: "project" | "task" | "event";
+  title: string;
+  subtitle: string;
+  href: string;
+  color: string | null;
+};
+
+const resultLabels = {
+  project: "Проєкт",
+  task: "Задача",
+  event: "Подія календаря",
+} as const;
+
 function navigateTo(href: string) {
   window.location.assign(href);
 }
@@ -18,6 +41,10 @@ export function GlobalTools() {
   const [goal, setGoal] = useState("Робота");
   const [minutes, setMinutes] = useState(25);
   const [project, setProject] = useState("");
+  const [serverResults, setServerResults] = useState<CommandResult[]>([]);
+  const [searchState, setSearchState] = useState<
+    "idle" | "loading" | "ready" | "error"
+  >("idle");
   useEffect(() => {
     const key = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement;
@@ -57,23 +84,80 @@ export function GlobalTools() {
     if ("serviceWorker" in navigator)
       navigator.serviceWorker.register("/sw.js").catch(() => undefined);
   }, []);
+
+  useEffect(() => {
+    const needle = query.trim();
+    if (!open || needle.length < 2) {
+      setServerResults([]);
+      setSearchState("idle");
+      return;
+    }
+    const controller = new AbortController();
+    const timeout = window.setTimeout(async () => {
+      setSearchState("loading");
+      try {
+        const response = await fetch(
+          `/api/search?q=${encodeURIComponent(needle)}&limit=8`,
+          { signal: controller.signal, cache: "no-store" },
+        );
+        if (!response.ok) throw new Error("search");
+        const payload = (await response.json()) as {
+          data?: { results?: ServerSearchResult[] };
+        };
+        setServerResults(
+          (payload.data?.results ?? []).map((item) => ({
+            id: item.id,
+            label: item.title,
+            href: item.href,
+            meta: `${resultLabels[item.type]} · ${item.subtitle}`,
+            color: item.color,
+          })),
+        );
+        setSearchState("ready");
+      } catch (error) {
+        if ((error as Error).name !== "AbortError") setSearchState("error");
+      }
+    }, 220);
+    return () => {
+      window.clearTimeout(timeout);
+      controller.abort();
+    };
+  }, [open, query]);
+
   const results = useMemo(() => {
-    const needle = query.toLowerCase();
-    return [
-      ...navItems.map((item) => ({
+    const needle = query.trim().toLocaleLowerCase("uk-UA");
+    const navigation: CommandResult[] = navItems
+      .map((item) => ({
         label: item[2],
         href: item[3],
         meta: "Сторінка",
-      })),
-      ...data.tasks.map((task) => ({
+      }))
+      .filter((item) => item.label.toLocaleLowerCase("uk-UA").includes(needle));
+    const localTasks: CommandResult[] = data.tasks
+      .map((task) => ({
+        id: task.id,
         label: task.text,
-        href: "/projects",
+        href: `/projects?task=${encodeURIComponent(task.id)}`,
         meta: "Задача",
-      })),
-    ]
-      .filter((item) => item.label.toLowerCase().includes(needle))
-      .slice(0, 8);
-  }, [query, data.tasks]);
+        color:
+          data.projects.find((item) => item.id === task.projectId)?.color ??
+          null,
+      }))
+      .filter((item) => item.label.toLocaleLowerCase("uk-UA").includes(needle));
+    const content =
+      needle.length >= 2 && searchState === "ready"
+        ? serverResults
+        : localTasks;
+    const seen = new Set<string>();
+    return [...navigation, ...content]
+      .filter((item) => {
+        const key = `${item.href}:${item.id ?? item.label}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .slice(0, 9);
+  }, [query, data.tasks, data.projects, serverResults, searchState]);
   const canQuickCreate = Boolean(query.trim() && data.projects.length > 0);
   const commandCount = results.length + (canQuickCreate ? 1 : 0);
 
@@ -206,6 +290,16 @@ export function GlobalTools() {
               aria-label="Результати пошуку"
             >
               <span className="eyebrow">Швидкий перехід</span>
+              {searchState === "loading" && (
+                <div className="command-status" role="status">
+                  <i /> Пошук у хмарних даних…
+                </div>
+              )}
+              {searchState === "error" && (
+                <div className="command-status warning" role="status">
+                  Показано локальні результати
+                </div>
+              )}
               {results.map((item, index) => (
                 <button
                   id={`nova-command-${index}`}
@@ -217,7 +311,16 @@ export function GlobalTools() {
                   onMouseEnter={() => setActiveResult(index)}
                   onClick={() => runCommand(index)}
                 >
-                  <i>{String(index + 1).padStart(2, "0")}</i>
+                  <i
+                    className={item.color ? "result-color" : ""}
+                    style={
+                      item.color
+                        ? ({ "--result-color": item.color } as React.CSSProperties)
+                        : undefined
+                    }
+                  >
+                    {item.color ? "" : String(index + 1).padStart(2, "0")}
+                  </i>
                   <span>
                     {item.label}
                     <small>{item.meta}</small>
