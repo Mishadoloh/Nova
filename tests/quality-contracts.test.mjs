@@ -66,7 +66,7 @@ const cases = [
   // Component behavior (10)
   ["app frame exposes active navigation state", "app/components/AppFrame.tsx", [/aria-current/, /breadcrumb/]],
   ["audio mixer persists custom levels", "app/components/AudioMixer.tsx", [/nova-audio-mixer-v2/, /localStorage\.setItem/]],
-  ["auth gate redirects protected pages", "app/components/AuthGate.tsx", [/getSession/, /register\?returnTo/]],
+  ["auth gate redirects protected pages", "app/components/AuthGate.tsx", [/getSession/, /register\?returnTo/, /splash-logo/, /aria-busy="true"/]],
   ["backend activity supports refresh", "app/components/BackendActivity.tsx", [/const load = useCallback/, /Оновити/]],
   ["backup manager supports merge and replace", "app/components/BackupManager.tsx", [/type Mode = "merge" \| "replace"/, /window\.confirm/]],
   ["engine insight handles unavailable analytics", "app/components/EngineInsight.tsx", [/engine-insight-error/, /Повторити/]],
@@ -81,7 +81,7 @@ const cases = [
   ["desktop layout adapts below 1100px", "app/styles/09-responsive.css", [/@media \(max-width: 1100px\)/]],
   ["tablet layout adapts below 760px", "app/styles/09-responsive.css", [/@media \(max-width: 760px\)/]],
   ["small phones adapt below 430px", "app/styles/09-responsive.css", [/@media \(max-width: 430px\)/]],
-  ["motion respects reduced-motion preference", "app/styles/10-quality-pass.css", [/@media \(prefers-reduced-motion: reduce\)/]],
+  ["motion respects reduced-motion preference", "app/styles/20-splash-screen.css", [/@media \(prefers-reduced-motion: reduce\)/, /splash-progress/]],
   ["contrast respects increased-contrast preference", "app/styles/10-quality-pass.css", [/@media \(prefers-contrast: more\)/]],
   ["analytics has a printable layout", "app/styles/02-product-tools.css", [/@media print/]],
   ["authentication adapts to mobile screens", "app/styles/12-auth-experience.css", [/@media \(max-width: 480px\)/]],
